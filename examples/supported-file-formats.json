@@ -1,0 +1,8 @@
+{"formats": {
+    "csv": {
+        "description": "Comma Separated Values",
+    },
+    "shape": { 
+        "description": "Shape FileSeparated Values",
+    }
+}}   
