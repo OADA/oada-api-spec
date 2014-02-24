@@ -8,6 +8,7 @@ OADA is opendly developed and built under the MIT License.
 
 Current Version
 ---------------
+The current version of the OADA API specification is intented to be a draft revision to seek input and feedback from the larger precision ag community.
 
 Authentication
 --------------
