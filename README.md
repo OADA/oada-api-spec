@@ -28,6 +28,7 @@ Returns metadata for all files that match the search criteria. Searches are limi
     
 /support/file_formats
 ---------------------
+Returns a list of OEM or precision ag software system file formats recognized by this provider.
 
 /support/transforms
 -------------------
