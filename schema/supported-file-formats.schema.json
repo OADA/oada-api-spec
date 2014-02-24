@@ -1,0 +1,22 @@
+{
+  "title": "OADA Data File Format Schema",
+  "description": "Array of precision ag data file formats that are supported by the provider.", 
+  "type": "array",
+    "items" : {
+          "type" : "object",
+          "properties" : {
+               "short_name": {
+                   "description": "Short abreviated name of the data file formt.",
+                   "type": "string"
+                },        
+                "long_name": {
+                   "description": "Long description of the data file format.", 
+                   "type": "string"
+                },
+                   "description": {
+                   "description": "Any additional information about the data file format.", 
+                   "type": "string"
+                }
+            }
+        }
+}

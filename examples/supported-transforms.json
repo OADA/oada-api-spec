@@ -1,0 +1,5 @@
+[
+    {"short_name":"csv", "long_name":"csv", "description:": "Comma Separated Values"},
+    {"short_name":"shp", "long_name":"shape", "description:": "Shape File"},
+    {"short_name":"tsv", "long_name":"tsv", "description:": "Tab Separated Values"}
+]

@@ -1,8 +1,7 @@
-{"formats": {
-    "csv": {
-        "description": "Comma Separated Values",
-    },
-    "shape": { 
-        "description": "Shape FileSeparated Values",
-    }
-}}   
+[
+    {"from_short_name":"csv", "to_short_name":"tsv"},
+    {"from_short_name":"csv", "to_short_name":"tsv"},
+    {"from_short_name":"csv", "to_short_name":"shp"},
+    {"from_short_name":"shp", "to_short_name":"csv"},
+    {"from_short_name":"shp", "to_short_name":"tsv"}
+]
