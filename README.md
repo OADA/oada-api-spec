@@ -6,6 +6,15 @@ Authentication
 --------------
 The open authorization standard OAuth 2 will be leveraged as the protocol to secure OADA APIs.
 
+TODO
+--------------
+* Review terms and naming conventions in API and JSON schemas
+* Validate syntax of API and JSON schemas
+* Define list of precision ag data types: examples/data-types.json
+* Define list of precision ag file formats: examples/supported-file-formats.json
+* Verification suite
+* Reference implementation
+
 Help us make it better
 ----------------------
 Please tell us how we can make the API better. If you have a specific feature request or if you found a bug, please use GitHub issues. Fork these docs and send a pull request with improvements. 
