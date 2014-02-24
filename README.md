@@ -30,15 +30,15 @@ Returns metadata for all files that match the search criteria. Searches are limi
     
 /support/file_formats
 ---------------------
-Returns a list of OEM or precision ag software system file formats recognized by this provider.
+Returns a list of all the OEM or precision ag software system file formats recognized by this provider.
 
 /support/transforms
 -------------------
-Returns if a desired transforms between file formats is supported by ths provider. 
+Returns if a desired transform between file formats is supported by ths provider. 
       
 /support/list
 -------------
-Returns a list of OEM or precision ag software system file formats recognized by this provider.
+Returns a list of all the OEM or precision ag software system file formats recognized by this provider.
 
 TODO
 --------------
