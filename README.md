@@ -10,6 +10,8 @@ Current Version
 ---------------
 The current version of the OADA API specification is intended to be a draft revision to seek input and feedback from the larger precision ag community.
 
+The draft specification has been defined in the RESTful API Modeling Language ([RAML](http://raml.org/)). The API specification in its entirety can be found here: [oada-api.raml](oada-api.raml)
+
 Authentication
 --------------
 The open authorization standard OAuth 2 will be leveraged as the protocol to secure OADA APIs.
