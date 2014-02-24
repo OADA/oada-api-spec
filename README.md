@@ -6,9 +6,35 @@ License
 --------
 OADA is opendly developed and built under the MIT License. 
 
+Current Version
+---------------
+
 Authentication
 --------------
 The open authorization standard OAuth 2 will be leveraged as the protocol to secure OADA APIs.
+
+/files
+------
+Operations to add, update, and delete precision ag files from the growers datastore.
+    
+/metadata
+---------
+Operations to read and write metadata associated with precision ag files in the growers datastore. System defined metadata cannot be modified.
+    
+/search
+-------
+Returns metadata for all files that match the search criteria. Searches are limited to the folder path and its sub-folder hierarchy provided in the call.
+    
+/support/file_formats
+---------------------
+
+/support/transforms
+-------------------
+Returns if a desired transforms between file formats is supported by ths provider. 
+      
+/support/list
+-------------
+Returns a list of OEM or precision ag software system file formats recognized by this provider.
 
 TODO
 --------------
