@@ -18,6 +18,7 @@ TODO
 * Define list of precision ag file formats: examples/supported-file-formats.json
 * Verification suite
 * Reference implementation
+* Document sample curl requests
 
 Help us make it better
 ----------------------
