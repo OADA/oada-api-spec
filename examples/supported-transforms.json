@@ -1,5 +1,7 @@
 [
-    {"short_name":"csv", "long_name":"csv", "description:": "Comma Separated Values"},
-    {"short_name":"shp", "long_name":"shape", "description:": "Shape File"},
-    {"short_name":"tsv", "long_name":"tsv", "description:": "Tab Separated Values"}
+    {"from_short_name":"csv", "to_short_name":"tsv"},
+    {"from_short_name":"csv", "to_short_name":"tsv"},
+    {"from_short_name":"csv", "to_short_name":"shp"},
+    {"from_short_name":"shp", "to_short_name":"csv"},
+    {"from_short_name":"shp", "to_short_name":"tsv"}
 ]
