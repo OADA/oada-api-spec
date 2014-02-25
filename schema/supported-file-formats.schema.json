@@ -6,7 +6,7 @@
           "type" : "object",
           "properties" : {
                "short_name": {
-                   "description": "Short abreviated name of the data file formt.",
+                   "description": "Short abbreviated name of the data file format.",
                    "type": "string"
                 },        
                 "long_name": {
@@ -17,6 +17,7 @@
                    "description": "Any additional information about the data file format.", 
                    "type": "string"
                 }
-            }
+            },
+            "required":["short_name", "long_name"]
         }
 }
