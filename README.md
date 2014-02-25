@@ -22,13 +22,12 @@ OADA APIs use the open authorization protocol [OAuth 2.0](http://oauth.net/2/) t
  * [Search](sections/search.md)
  * [Support](sections/support.md)
 
-## TODO
-* Review terms and naming conventions in API and JSON schemas
-* Validate syntax of API and JSON schemas
-* Define list of precision ag data types: examples/data-types.json
-* Define list of precision ag file formats: examples/supported-file-formats.json
-* Verification suite
-* Document sample curl requests
+## Schemas
+ * [Data Types](sections/data-types.md)
+ * [File Formats](sections/file-formats.md)
+ * [File Metadata](sections/file-metadata.md)
+ 
+## Verification Suite
 
 ## Help us make it better
 Please tell us how we can make the API better. If you have a specific feature request or if you found a bug, please use GitHub issues. Fork these docs and send a pull request with improvements. 
