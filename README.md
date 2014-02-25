@@ -18,9 +18,9 @@ OADA APIs use the open authorization protocol [OAuth 2.0](http://oauth.net/2/) t
 
 ## API Endpoints
  * [Files](sections/files.md)
- * [Metadata](metadata.md)
- * [Search](search.md)
- * [Support](support.md)
+ * [Metadata](sections/metadata.md)
+ * [Search](sections/search.md)
+ * [Support](sections/support.md)
 
 ## TODO
 * Review terms and naming conventions in API and JSON schemas
