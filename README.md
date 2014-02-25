@@ -11,7 +11,7 @@ The current version of the OADA API specification is intended to be a draft revi
 The draft specification has been defined in the RESTful API Modeling Language ([RAML](http://raml.org/)). The draft API specification in its entirety can be found here: [oada-api.raml](oada-api.raml)
 
 ## Wrappers and example code
-TODO: Add reference implementation
+TODO
 
 ## Authentication
 OADA APIs use the open authorization protocol [OAuth 2.0](http://oauth.net/2/) to secure access to grower data.
@@ -28,6 +28,7 @@ OADA APIs use the open authorization protocol [OAuth 2.0](http://oauth.net/2/) t
  * [File Metadata](sections/file-metadata.md)
  
 ## Verification Suite
+TODO
 
 ## Help us make it better
 Please tell us how we can make the API better. If you have a specific feature request or if you found a bug, please use GitHub issues. Fork these docs and send a pull request with improvements. 
