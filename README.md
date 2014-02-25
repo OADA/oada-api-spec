@@ -14,7 +14,7 @@ The draft specification has been defined in the RESTful API Modeling Language ([
 TODO: Add reference implementation
 
 ## Authentication
-The open authorization standard OAuth 2 will be leveraged as the protocol to secure OADA APIs.
+OADA APIs use the open authorization protocol [OAuth 2.0](http://oauth.net/2/) to secure access to grower data.
 
 ## API Endpoints
 
