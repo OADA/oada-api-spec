@@ -17,24 +17,10 @@ TODO: Add reference implementation
 OADA APIs use the open authorization protocol [OAuth 2.0](http://oauth.net/2/) to secure access to grower data.
 
 ## API Endpoints
-
-### /files
-Operations to add, update, and delete precision ag files from the growers datastore.
-    
-### /metadata
-Operations to read and write metadata associated with precision ag files in the growers datastore. System defined metadata cannot be modified.
-    
-### /search
-Returns metadata for all files that match the search criteria. Searches are limited to the folder path and its sub-folder hierarchy provided in the call.
-    
-### /support/file_formats
-Returns a list of all the OEM or precision ag software system file formats recognized by this provider.
-
-### /support/transforms
-Returns if a desired transform between file formats is supported by ths provider. 
-      
-### /support/list
-Returns a list of all the OEM or precision ag software system file formats recognized by this provider.
+ * [Files](sections/files.md)
+ * [Metadata](metadata.md)
+ * [Search](search.md)
+ * [Support](support.md)
 
 ## TODO
 * Review terms and naming conventions in API and JSON schemas
@@ -42,7 +28,6 @@ Returns a list of all the OEM or precision ag software system file formats recog
 * Define list of precision ag data types: examples/data-types.json
 * Define list of precision ag file formats: examples/supported-file-formats.json
 * Verification suite
-* Reference implementation
 * Document sample curl requests
 
 ## Help us make it better
