@@ -31,4 +31,4 @@ OADA APIs use the open authorization protocol [OAuth 2.0](http://oauth.net/2/) t
 TODO
 
 ## Help us make it better
-Please tell us how we can make the API better. If you have a specific feature request or if you found a bug, please use GitHub issues. Fork these docs and send a pull request with improvements. Join the [oada-dev] mailing list.
+Please tell us how we can make the API better. If you have a specific feature request or if you found a bug, please use GitHub issues. Fork these docs and send a pull request with improvements. Join the [oada-dev](https://groups.google.com/forum/?hl=en#!forum/oada-dev) mailing list.
