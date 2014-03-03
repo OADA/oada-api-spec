@@ -11,7 +11,7 @@ The current version of the OADA API specification is intended to be a draft revi
 The draft specification has been defined in the RESTful API Modeling Language ([RAML](http://raml.org/)). The draft API specification in its entirety can be found here: [oada-api.raml](oada-api.raml)
 
 ## Wrappers and example code
-TODO
+ * [Sinatra OADA API Impl](https://github.com/OADA/oada-api-sinatra-impl)
 
 ## Authentication
 OADA APIs use the open authorization protocol [OAuth 2.0](http://oauth.net/2/) to secure access to grower data.
