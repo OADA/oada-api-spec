@@ -213,17 +213,30 @@ resourceTypes:
           body:
             application/json:
               schema: !include default-file-metadata.schema.json
-/support: 
+/features: 
   /file_formats:
     description: |
-      Returns a list of OEM or precision ag software system file formats recognized
-      by this provider.
+      Returns if a desired file format is supported by this provider.
     get:
-      responses: 
+      queryParameters:
+        file_format:
+          type: string
+          required: true
+       responses: 
         200:
           body:
             application/json:
-              schema: !include supported-file-formats.schema.json
+              schema: "is_supported": { "type": "boolean" }     
+    /list:
+      description: |
+        Returns a list of OEM or precision ag software system file formats recognized
+        by this provider.
+      get:
+        responses: 
+          200:
+            body:
+              application/json:
+                schema: !include supported-file-formats.schema.json
   /transforms:
     description: |
       Returns if a desired transforms between file formats is supported by ths provider. 
