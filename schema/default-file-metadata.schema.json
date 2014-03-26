@@ -31,7 +31,6 @@
             "description": "The precision ag operation or task that was undertaken that represents the data stored in the file.",
             "type": "string"
         },          
-        data_type
         "grower_name": {
             "description": "",
             "type": "string"
