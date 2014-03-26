@@ -18,7 +18,7 @@ documentation:
       open heterogeneous environment that supports many legacy, current, and
       future data formats can be embraced.
 schemas:
-  - default-file-metadata: !include default-file-metadata.schema.json
+  - default-file-metadata: !include schema/default-file-metadata.schema.json
 securitySchemes:
     - oauth_2_0:
         description: |
@@ -134,7 +134,7 @@ resourceTypes:
           200:
             body:
               application/json:
-                schema: !include default-file-metadata.schema.json
+                schema: !include schema/default-file-metadata.schema.json
     get:
       description: |
         The specified file's contents at the requested revision. The file can
@@ -221,7 +221,7 @@ resourceTypes:
           200:
             body:
               application/json:
-                schema: !include default-file-metadata.schema.json
+                schema: !include schema/default-file-metadata.schema.json
           404:
             description: |
               The file wasn't found at the specified path, or wasn't found at
@@ -263,7 +263,7 @@ resourceTypes:
           200:
             body:
               application/json:
-                schema: !include default-file-metadata.schema.json
+                schema: !include schema/default-file-metadata.schema.json
 /features:
   /file_formats:
     description: |
@@ -288,7 +288,7 @@ resourceTypes:
           200:
             body:
               application/json:
-                schema: !include supported-file-formats.schema.json
+                schema: !include schema/supported-file-formats.schema.json
   /transforms:
     description: |
       Returns if a desired transforms between file formats is supported by ths
@@ -316,4 +316,4 @@ resourceTypes:
           200:
             body:
               application/json:
-                schema: !include supported-transforms.schema.json
+                schema: !include schema/supported-transforms.schema.json
