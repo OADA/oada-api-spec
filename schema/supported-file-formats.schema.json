@@ -13,11 +13,15 @@
                    "description": "Long description of the data file format.", 
                    "type": "string"
                 },
-                   "description": {
+                "description": {
                    "description": "Any additional information about the data file format.", 
                    "type": "string"
+                },
+                "is_supported": {
+                    "description": "Is the file type supported",
+                    "type": "boolean"
                 }
             },
-            "required":["short_name", "long_name"]
+            "required":["short_name", "long_name", "is_supported"]
         }
 }
