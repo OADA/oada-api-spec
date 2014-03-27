@@ -10,6 +10,9 @@
                 },        
                 "to_short_name": {
                    "type": "string"
+                },
+                "is_supported": {
+                   "type": "boolean"
                 }
             }
         }
