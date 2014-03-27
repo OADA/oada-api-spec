@@ -78,11 +78,11 @@ resourceTypes:
               The request has succeeded. The information returned with the
               response is dependent on the method used in the request.
 /files:
-  type: base
   description: |
     Operations to add, update, and delete precision ag files from the
     growers datastore.
   /{path}:
+    type: base
     uriParameters:
         path:
           description: |
@@ -188,11 +188,11 @@ resourceTypes:
               The file wasn't found at the specified path, or wasn't found at
               the specified rev.
 /metadata:
-  type: base
   description: |
     Operations to read and write metadata associated with precision ag files in
     the growers datastore. System defined metadata cannot be modified.
   /{path}:
+    type: base
     uriParameters:
         path:
           description: |
@@ -227,11 +227,12 @@ resourceTypes:
               The file wasn't found at the specified path, or wasn't found at
               the specified rev.
 /search:
-  type: base
   description: |
-    Returns metadata for all files that match the search criteria. Searches are
-    limited to the folder path and its sub-folder hierarchy provided in the call.
+    Returns metadata for all files that match the search criteria. Searches 
+    are limited to the folder path and its sub-folder hierarchy provided in the 
+    call.
   /{path}:
+    type: base
     uriParameters:
       path:
         description: |
@@ -266,30 +267,23 @@ resourceTypes:
                 schema: !include schema/default-file-metadata.schema.json
 /features:
   /file_formats:
+    type: base
     description: |
-      Returns if a desired file format is supported by this provider.
+      Returns a list of supported file format .
     get:
       queryParameters:
         file_format:
           type: string
-          required: true
+          required: false
+          description: |
+            Limit the results to the given file formats.
       responses:
         200:
           body:
             application/json:
-              schema: |
-                {"is_supported": { "type": "boolean" }}
-    /list:
-      description: |
-        Returns a list of OEM or precision ag software system file formats
-        recognized by this provider.
-      get:
-        responses:
-          200:
-            body:
-              application/json:
-                schema: !include schema/supported-file-formats.schema.json
+              schema: !include schema/supported-file-formats.schema.json
   /transforms:
+    type: base
     description: |
       Returns if a desired transforms between file formats is supported by ths
       provider.
@@ -297,23 +291,17 @@ resourceTypes:
       queryParameters:
         from_file_format:
           type: string
-          required: true
+          required: false
+          description: |
+            Limit results to all transforms that start with the given file 
+            formats
         to_file_format:
           type: string
-          required: true
+          required: false
+          description: |
+            Limit results to all transform that end with the given file formats
       responses:
         200:
           body:
             application/json:
-              schema: |
-                {"is_supported": { "type": "boolean" }}
-    /list:
-      description: |
-        Returns a list of transforms between file formats that are supported by
-        ths provider.
-      get:
-        responses:
-          200:
-            body:
-              application/json:
-                schema: !include schema/supported-transforms.schema.json
+              schema: !include schema/supported-file-formats.schema.json
