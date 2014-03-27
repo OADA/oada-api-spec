@@ -7,213 +7,264 @@ version: v0.1
 baseUri: https://api.oada.io/{version}
 protocols: [ HTTPS ]
 documentation:
-  content: |
-    The OADA API is intended to serve as a specification for all providers that desire to
-    be OADA compliant. This API does not attempt to define or enforce a single industry data standard.
-    The goal of this API is to enable interoperability between the many precision ag software 
-    systems and existing industry data types. By providing an extensible API that focuses on information
-    exchange and facilitates data transformations an open heterogeneous environment 
-    that supports many legacy, current, and future data formats can be embraced. 
+  - title: Home
+    content: |
+      The OADA API is intended to serve as a specification for all providers
+      that desire to be OADA compliant. This API does not attempt to define or
+      enforce a single industry data standard.  The goal of this API is to
+      enable interoperability between the many precision ag software systems
+      and existing industry data types. By providing an extensible API that
+      focuses on information exchange and facilitates data transformations an
+      open heterogeneous environment that supports many legacy, current, and
+      future data formats can be embraced.
 schemas:
-  default-file-metadata: default-file-metadata.schema.json
+  - default-file-metadata: !include default-file-metadata.schema.json
 securitySchemes:
     - oauth_2_0:
-        description: OADA supports OAuth 2.0 for authenticating all API requests.
+        description: |
+          OADA supports OAuth 2.0 for authenticating all API requests.
         type: OAuth 2.0
         describedBy:
             headers:
                 Authorization:
-                    description: Used to send a valid OAuth 2 access token. Do not use  with the "access_token" query string parameter.
+                    description: |
+                      Used to send a valid OAuth 2 access token. Do not use
+                      with the "access_token" query string parameter.
                 oauth-scope:
             responses:
                 401:
-                    description: Bad or expired token. This can happen if the token expired. To fix, you should re-authenticate the user.
+                    description: |
+                      Bad or expired token. This can happen if the token
+                      expired. To fix, you should re-authenticate the user.
                 403:
-                    description: Bad OAuth request (wrong consumer key, bad nonce, expired timestamp...). Unfortunately, re-authenticating the user won't help here.
+                    description: |
+                      Bad OAuth request (wrong consumer key, bad nonce, expired
+                      timestamp...). Unfortunately, re-authenticating the user
+                      won't help here.
         settings:
+          authorizationUri: https://www.oada.io/1/oauth2/authorize
           accessTokenUri: https://auth.oada.io/1/oauth2/token
           authorizationGrants: [ token ]
 securedBy: [ oauth_2_0 ]
 resourceTypes:
   - base:
       get?:
-        responses: 
-          400: 
-            description: Bad Request. The request could not be understood by the server due to malformed syntax.
-          401: 
-            description: "Unauthorized. The request requires user authentication."
-          404: 
-            description: "Not Found. The server has not found anything matching the Request-URI."
+        responses:
+          400:
+            description: |
+              Bad Request. The request could not be understood by the server
+              due to malformed syntax.
+          401:
+            description: |
+              Unauthorized. The request requires user authentication.
+          404:
+            description: |
+              Not Found. The server has not found anything matching the
+              Request-URI.
       post?:
-        responses: 
-          201?: 
-            description: The request has been fulfilled and resulted in a new resource being created.
-          403: 
-            description: Forbidden. The server understood the request, but is refusing to fulfill it.
+        responses:
+          201?:
+            description: |
+              The request has been fulfilled and resulted in a new resource
+              being created.
+          403:
+            description: |
+              Forbidden. The server understood the request, but is refusing to
+              fulfill it.
       put?:
-        responses: 
-          200?: 
-            description: The request has succeeded. The information returned with the response is dependent on the method used in the request.
+        responses:
+          200?:
+            description: |
+              The request has succeeded. The information returned with the
+              response is dependent on the method used in the request.
 /files:
   type: base
   description: |
-    Operations to add, update, and delete precision ag files from the 
+    Operations to add, update, and delete precision ag files from the
     growers datastore.
-  put:
-    description: |
-      Uploads a file using PUT semantics. The preferred HTTP method for this call is PUT. 
-      For compatibility with browser environments, the POST HTTP method is also recognized.
-      Note: Providing a Content-Length header set to the size of the uploaded file is 
-      required so that the server can verify that it has received the entire file contents.
-    headers:
-      x-oada-file-metadata:
-        displayName: OADA File Metadata 
-        description: |
-          System defined and optional platform defined metadata associated with a file.
-        type: json
-        required: false
-        maxLength: 1000
-    baseUriParameters:
-      path:
-        description: Absolute path to file in the grower datastore.
-    queryParameters:
-      file_format: 
-        required: false
-        description: |
-          The OEM or precision ag software system file format of the file being 
-          put into the grower data store. A best estimate will be used to identify 
-          the file format if one is not provided.
-        example: 
-      data_type:
-        required: false
-        description: |
-          The precision ag operation or task that was undertaken that represents the 
-          data stored in the file. A best estimate will be used to identify 
-          the data type if one is not provided.
-        example: yld, soil-sample, plantting, nitrogen, scouting
-      overwrite:
-        required: false
-        type: boolean
-        default: false
-        enum: [ true, false]
-        description: |
-          Determines what happens when there's already a file at the specified path. If true, the existing file 
-          will be overwritten by the new one. If false, the new file will be automatically renamed. File version
-          naming schema is left to the provider. The new name can be obtained from the returned metadata.
-    responses: 
-        200:
-          body:
-            application/json:
-              schema: !include default-file-metadata.schema.json
-  get:
-    description: | 
-      The specified file's contents at the requested revision. The file can optionally
-      return in an alternate format by setting the file_format query parameter.
-      The HTTP response contains the content metadata in JSON format within an x-oada-file-metadata header.
-    headers:
-      x-oada-file-metadata:
-        displayName: OADA File Metadata 
-        description: |
-          System defined and optional platform defined metadata associated with a file.
-        type: json
-        required: false
-        maxLength: 1000  
-    baseUriParameters:
-      path:
-        description: Absolute path to the file in the grower datastore.
-    queryParameters:
-      file_format:
-        required: false
-        description: The OEM or precision ag software system file format to return the request file into. 
-        example:
-    rev:
-        required: false
-        type: string
-        description: The revision of the file to retrieve. This defaults to the most recent revision. 
-    responses:
-        404:
-          description: The file wasn't found at the specified path, or wasn't found at the specified rev.  
-        501:
-          description: The file could not be returned in the format requested as defined by the file_format query parameter.   
-  delete:
-    description: Deletes a file and its associated metadata
-    baseUriParameters:
-      path:
-        description: Absolute path to file in the grower datastore.
-      rev:
-        required: false
-        type: string
-        description: The revision of the file to retrieve. This defaults to the most recent revision.
-    responses:
-        404:
-          description: The file wasn't found at the specified path, or wasn't found at the specified rev.  
+  /{path}:
+    uriParameters:
+        path:
+          description: |
+            Absolute path to file in the grower datastore.
+          type: string
+    put:
+      description: |
+        Uploads a file using PUT semantics. The preferred HTTP method for this
+        call is PUT. For compatibility with browser environments, the POST HTTP
+        method is also recognized.
+        Note: Providing a Content-Length header set to the size of the uploaded
+          file is required so that the server can verify that it has received
+          the entire file contents.
+      headers:
+        x-oada-file-metadata:
+          displayName: OADA File Metadata
+          description: |
+            System defined and optional platform defined metadata associated
+            with a file.
+          type: string
+          required: false
+          maxLength: 1000
+      queryParameters:
+        file_format:
+          required: false
+          description: |
+            The OEM or precision ag software system file format of the file
+            being put into the grower data store. A best estimate will be used
+            to identify the file format if one is not provided.
+          example:
+        data_type:
+          required: false
+          description: |
+            The precision ag operation or task that was undertaken that
+            represents the data stored in the file. A best estimate will be
+            used to identify the data type if one is not provided.
+          example: yld, soil-sample, plantting, nitrogen, scouting
+        overwrite:
+          required: false
+          type: boolean
+          default: false
+          description: |
+            Determines what happens when there's already a file at the
+            specified path. If true, the existing file will be overwritten by
+            the new one. If false, the new file will be automatically renamed.
+            File version naming schema is left to the provider. The new name
+            can be obtained from the returned metadata.
+      responses:
+          200:
+            body:
+              application/json:
+                schema: !include default-file-metadata.schema.json
+    get:
+      description: |
+        The specified file's contents at the requested revision. The file can
+        optionally return in an alternate format by setting the file_format
+        query parameter. The HTTP response contains the content metadata in
+        JSON format within an x-oada-file-metadata header.
+      headers:
+        x-oada-file-metadata:
+          displayName: OADA File Metadata
+          description: |
+            System defined and optional platform defined metadata associated
+            with a file.
+          type: string
+          required: false
+          maxLength: 1000
+      queryParameters:
+        file_format:
+          required: false
+          description: |
+            The OEM or precision ag software system file format to return the
+            request file into.
+          example:
+        rev:
+          required: false
+          type: string
+          description: |
+            The revision of the file to retrieve. This defaults to the most
+            recent revision.
+      responses:
+          404:
+            description: |
+              The file wasn't found at the specified path, or wasn't found at
+              the specified rev.
+          501:
+            description: |
+              The file could not be returned in the format requested as defined
+              by the file_format query parameter.
+    delete:
+      description: |
+        Deletes a file and its associated metadata
+      queryParameters:
+        rev:
+          required: false
+          type: string
+          description: |
+            The revision of the file to retrieve. This defaults to the most
+            recent revision.
+      responses:
+          404:
+            description: |
+              The file wasn't found at the specified path, or wasn't found at
+              the specified rev.
 /metadata:
   type: base
   description: |
-    Operations to read and write metadata associated with precision ag files in the 
-    growers datastore. System defined metadata cannot be modified.
-  put:
-    description: |
-      Uploads a metadata file using PUT semantics. The preferred HTTP method for this call is PUT. 
-      For compatibility with browser environments, the POST HTTP method is also recognized.
-      Note: Providing a Content-Length header set to the size of the uploaded file is 
-      required so that the server can verify that it has received the entire file contents.
-    baseUriParameters:
-      path:
-        description: Absolute path to file in the grower datastore.
-  get:
-    description: | 
-      The specified file's metadata at the requested revision. 
-    baseUriParameters:
-      path:
-        description: Absolute path to the file in the grower datastore.
-    queryParameters:
-    rev:
-        required: false
-        type: string
-        description: |
-          If you include a particular revision number, then only the metadata for 
-          that revision will be returned. This defaults to the most recent revision. 
-    responses:
-        200:
-          body:
-            application/json:
-              schema: !include default-file-metadata.schema.json      
-        404:
-          description: The file wasn't found at the specified path, or wasn't found at the specified rev.                
+    Operations to read and write metadata associated with precision ag files in
+    the growers datastore. System defined metadata cannot be modified.
+  /{path}:
+    uriParameters:
+        path:
+          description: |
+            Absolute path to file in the grower datastore.
+          type: string
+    put:
+      description: |
+        Uploads a metadata file using PUT semantics. The preferred HTTP method
+        for this call is PUT. For compatibility with browser environments, the
+        POST HTTP method is also recognized.
+        Note: Providing a Content-Length header set to the size of the uploaded
+          file is required so that the server can verify that it has received
+          the entire file contents.
+    get:
+      description: |
+        The specified file's metadata at the requested revision.
+      queryParameters:
+        rev:
+          required: false
+          type: string
+          description: |
+            If you include a particular revision number, then only the metadata
+            for that revision will be returned. This defaults to the most
+            recent revision.
+      responses:
+          200:
+            body:
+              application/json:
+                schema: !include default-file-metadata.schema.json
+          404:
+            description: |
+              The file wasn't found at the specified path, or wasn't found at
+              the specified rev.
 /search:
   type: base
   description: |
-    Returns metadata for all files that match the search criteria. Searches are 
+    Returns metadata for all files that match the search criteria. Searches are
     limited to the folder path and its sub-folder hierarchy provided in the call.
-  get:
-    baseUriParameters:
+  /{path}:
+    uriParameters:
       path:
-        description: Absolute path to the file in the grower datastore.
-    queryParameters:
-      query:
         description: |
-          The search string. This string is split (on spaces) into individual words. 
-          Words can be further split (on =) into key-value pairs. Where the key is a 
-          property name defined in the file's metadata and the value is the value of the property.
-          TODO: Consider standardizing on a query syntax such as Lucene
-        required: true
+          Absolute path to file in the grower datastore.
         type: string
-      limit:
-        description: Number of search results to return
-        type: integer
-        default: 30
-        maximum: 200
-      offset:
-        description: The search result at which to start the response.
-        type: integer
-        default: 0
-    responses: 
-        200:
-          body:
-            application/json:
-              schema: !include default-file-metadata.schema.json
-/features: 
+    get:
+      queryParameters:
+        query:
+          description: |
+            The search string. This string is split (on spaces) into individual
+            words. Words can be further split (on =) into key-value pairs.
+            Where the key is a property name defined in the file's metadata and
+            the value is the value of the property.
+            TODO: Consider standardizing on a query syntax such as Lucene
+          required: true
+          type: string
+        limit:
+          description: |
+            Number of search results to return
+          type: integer
+          default: 30
+          maximum: 200
+        offset:
+          description: |
+            The search result at which to start the response.
+          type: integer
+          default: 0
+      responses:
+          200:
+            body:
+              application/json:
+                schema: !include default-file-metadata.schema.json
+/features:
   /file_formats:
     description: |
       Returns if a desired file format is supported by this provider.
@@ -222,24 +273,26 @@ resourceTypes:
         file_format:
           type: string
           required: true
-       responses: 
+      responses:
         200:
           body:
             application/json:
-              schema: "is_supported": { "type": "boolean" }     
+              schema: |
+                {"is_supported": { "type": "boolean" }}
     /list:
       description: |
-        Returns a list of OEM or precision ag software system file formats recognized
-        by this provider.
+        Returns a list of OEM or precision ag software system file formats
+        recognized by this provider.
       get:
-        responses: 
+        responses:
           200:
             body:
               application/json:
                 schema: !include supported-file-formats.schema.json
   /transforms:
     description: |
-      Returns if a desired transforms between file formats is supported by ths provider. 
+      Returns if a desired transforms between file formats is supported by ths
+      provider.
     get:
       queryParameters:
         from_file_format:
@@ -248,16 +301,18 @@ resourceTypes:
         to_file_format:
           type: string
           required: true
-       responses: 
+      responses:
         200:
           body:
             application/json:
-              schema: "is_supported": { "type": "boolean" } 
-      /list:
+              schema: |
+                {"is_supported": { "type": "boolean" }}
+    /list:
       description: |
-        Returns a list of transforms between file formats that are supported by ths provider. 
+        Returns a list of transforms between file formats that are supported by
+        ths provider.
       get:
-        responses: 
+        responses:
           200:
             body:
               application/json:
