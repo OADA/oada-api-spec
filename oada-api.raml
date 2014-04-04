@@ -15,302 +15,342 @@ baseUriParameters:
         example: api.oada.io, api.oada.io/OADA
 
 documentation:
-  - title: Overview
-    content: |
-      The OADA API is intended to serve as a specification for all providers
-      that desire to be OADA compliant. This API does not attempt to define or
-      enforce a single industry data standard. The goal of this API is to
-      enable interoperability between the many precision ag software systems
-      and existing industry data types. By providing an extensible API that
-      focuses on information exchange and facilitates data transformations, an
-      open heterogeneous environment that supports many legacy, current, and
-      future data formats can be embraced.
-  - title: Readme
-    content: !include README.md
-  - title: License
-    content: !include LICENSE
+    -   title: Overview
+        content: |
+            The OADA API is intended to serve as a specification for all
+            providers that desire to be OADA compliant. This API does not
+            attempt to define or enforce a single industry data standard. The
+            goal of this API is to enable interoperability between the many
+            precision ag software systems and existing industry data types. By
+            providing an extensible API that focuses on information exchange
+            and facilitates data transformations, an open heterogeneous
+            environment that supports many legacy, current, and future data
+            formats can be embraced.
+    -   title: Readme
+        content: !include README.md
+    -   title: License
+        content: !include LICENSE
 
 protocols: [ HTTPS ]
 schemas:
-  - default-file-metadata: !include schema/default-file-metadata.schema.json
+    -   default-file-metadata: !include |
+            schema/default-file-metadata.schema.json
 securitySchemes:
-    - oauth_2_0:
-        description: |
-          OADA supports OAuth 2.0 for authenticating all API requests.
-        type: OAuth 2.0
-        describedBy:
-            headers:
-                Authorization:
-                    description: |
-                      Used to send a valid OAuth 2 access token. Do not use
-                      with the "access_token" query string parameter.
-                oauth-scope:
-            responses:
-                401: &resp401
-                    description: |
-                      Bad or expired token. This can happen if the token
-                      expired. To fix, you should re-authenticate the user.
-                403: &resp403
-                    description: |
-                      Bad OAuth request (wrong consumer key, bad nonce, expired
-                      timestamp...). Unfortunately, re-authenticating the user
-                      won't help here.
-        settings:
-          authorizationUri: https://{rootUri}/oauth2/authorize
-          accessTokenUri: https://{rootUri}/oauth2/token
-          authorizationGrants: [ token ]
+    -   oauth_2_0:
+            description: |
+                OADA supports OAuth 2.0 for authenticating all API requests.
+            type: OAuth 2.0
+            describedBy:
+                headers:
+                    Authorization:
+                        description: |
+                            Used to send a valid OAuth 2 access token. Do not
+                            use with the "access_token" query string parameter.
+                    oauth-scope:
+                responses:
+                    401: &resp401
+                        description: |
+                            Bad or expired token. This can happen if the token
+                            expired. To fix, you should re-authenticate the
+                            user.
+                    403: &resp403
+                        description: |
+                            Bad OAuth request (wrong consumer key, bad nonce,
+                            expired timestamp...). Unfortunately,
+                            re-authenticating the user won't help here.
+            settings:
+                authorizationUri: https://{rootUri}/oauth2/authorize
+                accessTokenUri: https://{rootUri}/oauth2/token
+                authorizationGrants: [ token ]
 securedBy: [ oauth_2_0 ]
 
 resourceTypes:
-  - _common:
-      usage: |
-          This should *NOT* be used for any actual resource. Attributes common
-          across all methods should be defined here.
-      get?: &_common
-        description: "TODO: Write Description" # Reminder in console to document
-        responses:
-          404?: &_resp404
-            description: |
-              Not Found. The server has not found anything matching the
-              Request-URI.
-            headers: &_commonHeaders
-              X-Rate-Limit-Limit:
-                type: integer
-                required: true
+    -   _common:
+            usage: |
+                This should *NOT* be used for any actual resource. Attributes
+                common across all methods should be defined here.
+            get?: &_common
                 description: |
-                  The maximum number of requests allowed per rate-limit window.
-                example: "X-Rate-Limit-Limit: 100"
-              X-Rate-Limit-Remaining:
-                type: integer
-                required: true
-                description: |
-                  The number of remaining requests allowed in the current
-                  rate-limit window.
-                example: "X-Rate-Limit-Remaining: 89"
-              X-Rate-Limit-Reset:
-                type: integer
-                required: true
-                description: |
-                  The number of UTC epoch seconds until the next rate-limit
-                  window begins.
-                example: "X-Rate-Limit-Reset: 124"
-          429: &_resp429
-            description: |
-              Too Many Requests. The request was rejected due to rate limiting.
-              The request was not processed to determine its validity.
-            headers: *_commonHeaders
-            body:
-              application/json:
-                schema: !!null
-      head?: *_common
-      put?: *_common
-      post?: *_common
-      delete?: *_common
+                    "TODO: Write Description" # Reminder in console to document
+                responses:
+                    404?: &_resp404
+                        description: |
+                            Not Found. The server has not found anything
+                            matching the Request-URI.
+                        headers: &_commonHeaders
+                            X-Rate-Limit-Limit:
+                                type: integer
+                                required: true
+                                description: |
+                                    The maximum number of requests allowed per
+                                    rate-limit window.
+                                example: "X-Rate-Limit-Limit: 100"
+                            X-Rate-Limit-Remaining:
+                                type: integer
+                                required: true
+                                description: |
+                                    The number of remaining requests allowed in
+                                    the current rate-limit window.
+                                example: "X-Rate-Limit-Remaining: 89"
+                            X-Rate-Limit-Reset:
+                                type: integer
+                                required: true
+                                description: |
+                                    The number of UTC epoch seconds until the
+                                    next rate-limit window begins.
+                                example: "X-Rate-Limit-Reset: 124"
+                    429: &_resp429
+                        description: |
+                            Too Many Requests. The request was rejected due to
+                            rate limiting. The request was not processed to
+                            determine its validity.
+                        headers: *_commonHeaders
+                        body:
+                            application/json:
+                                schema: !!null
+            head?: *_common
+            put?: *_common
+            post?: *_common
+            delete?: *_common
 
-  - _commonGlue:
-      usage: |
-          This should NOT be used for any actual resource. Applies the common
-          attributes to the supported methods. This is a glue layer needed
-          because RAML does not support map merging. This level can be used to
-          require attributes that are required for all resources.
-      type: _common
-      get?:
-        responses:
-          200: &_resp200
-            description: |
-              OK. The request has succeeded. The information returned with the
-              response is dependent on the method used in the request.
-            headers: *_commonHeaders
-          304: &_resp304
-            description: |
-              Not Modified. The result of the request is the same as the cached
-              version at the client.
-            headers: *_commonHeaders
-          400?: &_resp400
-            description: |
-              Bad Request. The request could not be understood by the server
-              due to malformed syntax.
-            headers: *_commonHeaders
-      head?:
-        responses:
-          204: &_resp204
-            description: |
-              No Content. Request was successful and there is no content to
-              return.
-            headers: *_commonHeaders
-          400?: *_resp400
-      put?:
-        responses:
-          200: *_resp200
-          201: &_resp201
-            description: |
-              Created. The request has been fulfilled and resulted in a new
-              resource being created.
-            headers: *_commonHeaders
-          400?: *_resp400
-          415?: &_resp415
-            description: |
-              Unsupported Media Type. The request contains a body with an
-              unsupported media type.
-            headers: *_commonHeaders
-      post?:
-        responses:
-          201: *_resp201
-          400?: *_resp400
-          415?: *_resp415
-      delete?:
-        responses:
-          204: *_resp204
-          409?: &_resp409
-            description: |
-                Conflict. The request could not be processed because the
-                resource state is either currently in or would be left in a
-                conflicted state.
-            headers: *_commonHeaders
+    -   _commonGlue:
+            usage: |
+                This should NOT be used for any actual resource. Applies the
+                common attributes to the supported methods. This is a glue
+                layer needed because RAML does not support map merging. This
+                level can be used to require attributes that are required for
+                all resources.
+            type: _common
+            get?:
+                responses:
+                    200: &_resp200
+                        description: |
+                            OK. The request has succeeded. The information
+                            returned with the response is dependent on the
+                            method used in the request.
+                        headers: *_commonHeaders
+                    304: &_resp304
+                        description: |
+                            Not Modified. The result of the request is the same
+                            as the cached version at the client.
+                        headers: *_commonHeaders
+                    400?: &_resp400
+                        description: |
+                            Bad Request. The request could not be understood by
+                            the server due to malformed syntax.
+                        headers: *_commonHeaders
+            head?:
+                responses:
+                    204: &_resp204
+                        description: |
+                            No Content. Request was successful and there is no
+                            content to return.
+                        headers: *_commonHeaders
+                    400?: *_resp400
+            put?:
+                responses:
+                    200: *_resp200
+                    201: &_resp201
+                        description: |
+                            Created. The request has been fulfilled and
+                            resulted in a new resource being created.
+                        headers: *_commonHeaders
+                    400?: *_resp400
+                    412:
+                        description: |
+                            One or more of the preconditions given in the
+                            request headers was not met. The request was not
+                            fulfilled.
+                        headers: *_commonHeaders
+                    415?: &_resp415
+                        description: |
+                            Unsupported Media Type. The request contains a body
+                            with an unsupported media type.
+                        headers: *_commonHeaders
+            post?:
+                responses:
+                    201: *_resp201
+                    400?: *_resp400
+                    415?: *_resp415
+            delete?:
+                responses:
+                    204: *_resp204
+                    409?: &_resp409
+                        description: |
+                            Conflict. The request could not be processed
+                            because the resource state is either currently in
+                            or would be left in a conflicted state.
+                        headers: *_commonHeaders
 
-  - _base:
-      usage: |
-          This should NOT be used for any actual resource. Attributes common to
-          a certain method type across all resources should be defined here.
-      type: _commonGlue
-      get:
-        headers:
-          If-None-Match:
-            type: string
-            required: false
-            description: |
-              Cached value received from the server in an `ETag` header the
-              last time a `GET` on this resource returned succeeded.
-              The server will use this to determine if the resource has
-              changed and decide whether to respond with `304`.
-            example: 'If-None-Match: "686897696a7c876b7e"'
-        responses:
-          200:
-            headers:
-              ETag:
-                type: string
-                required: false
-                description: |
-                  An optional opaque identifier assigned by the server to the
-                  specific version of the resource contained in this response.
-                  The client can cache it for inclusion in a future conditional
-                  `GET` on this resource.
-                example: 'ETag: "686897696a7c876b7e"'
-      put?:
-        headers:
-            Content-Length: &contentLengthHeader
-                required: true
-                type: integer
-                description: |
-                    A Content-Length header is required to verify that the
-                    entire transmission was received.
-            Content-MD5: &contentMD5Header
-                required: false
-                type: string
-                description: |
-                    The optional Content-MD5 header is used to verify the
-                    received file is error free. The header is defined in
-                    [RFC1864](http://www.ietf.org/rfc/rfc1864.txt "RFC1864").
-            Content-Disposition?: &contentDispositionHeader
-              type: string
-              required: false
-              description: |
-                Can be used to specify, among other things, the desired name of
-                the file to be created by this request.
-                The headers usage in HTTP is defined in
-                [RFC6266](http://www.ietf.org/rfc/rfc6266.txt "RFC6266")
-              example: 'Content-Disposition: attachment; filename="field.shp"'
-        responses:
-          201: &_locationHeader
-            headers:
-              Location:
-                type: string
-                required: true
-                description: |
-                  The maximum number of requests allowed per rate-limit window.
-      post?:
-        headers:
-            Content-Length: *contentLengthHeader
-            Content-MD5: *contentMD5Header
-            Content-Disposition?: *contentDispositionHeader
-        responses:
-          201: *_locationHeader
+    -   _base:
+            usage: |
+                This should NOT be used for any actual resource. Attributes
+                common to a certain method type across all resources should be
+                defined here.
+            type: _commonGlue
+            get:
+                headers:
+                    If-None-Match:
+                        type: string
+                        required: false
+                        description: |
+                            Cached value received from the server in an `ETag`
+                            header the last time a `GET` on this succeeded.
+                            The server will use this to determine if the
+                            resource has changed and decide whether to respond
+                            with `304`.
+                        example: 'If-None-Match: "686897696a7c876b7e"'
+                responses:
+                    200:
+                        headers:
+                            ETag: &etagHeader
+                                type: string
+                                required: true
+                                description: |
+                                    An optional opaque identifier assigned by
+                                    the server to the specific version of the
+                                    resource contained in this response.  The
+                                    client can cache it for inclusion in a
+                                    future conditional `GET` on this resource.
+                                example: 'ETag: "686897696a7c876b7e"'
+            head?:
+                responses:
+                    200:
+                        headers:
+                            ETag: *etagHeader 
+            put?:
+                headers:
+                    Content-Length: &contentLengthHeader
+                        required: true
+                        type: integer
+                        description: |
+                            A Content-Length header is required to verify that
+                            the entire transmission was received.
+                    Content-MD5: &contentMD5Header
+                        required: false
+                        type: string
+                        description: |
+                            The optional Content-MD5 header is used to verify
+                            the received file is error free. The header is
+                            defined in [RFC1864][RFC].
+                            [RFC]: http://www.ietf.org/rfc/rfc1864.txt "RFC1864"
+                    Content-Disposition?: &contentDispositionHeader
+                        type: string
+                        required: false
+                        description: |
+                            Can be used to specify, among other things, the
+                            desired name of the file to be created by this
+                            request.  The headers usage in HTTP is defined in
+                            [RFC6266][RFC].
+                            [RFC]: http://www.ietf.org/rfc/rfc6266.txt "RFC6266"
+                        example: |
+                            Content-Disposition:
+                            attachment; filename="field.shp"
+                    If-Match: &ifMatchHeader
+                        type: string
+                        required: false
+                        description: |
+                            Cached value received from the server in an `ETag`
+                            header the last time a `GET` on this resource
+                            succeeded.  The server will use this to determine
+                            if the resource has changed and decide whether to
+                            respond with `412`.
+                        example: 'If-Match: "686897696a7c876b7e"'
+                responses:
+                    201: &_locationHeader
+                        headers:
+                            Location:
+                                type: string
+                                required: true
+                                description: |
+                                    The maximum number of requests allowed per
+                                    rate-limit window.
+            post?:
+                headers:
+                    Content-Length: *contentLengthHeader
+                    Content-MD5: *contentMD5Header
+                    Content-Disposition?: *contentDispositionHeader
+                responses:
+                    201: *_locationHeader
 
-  - member:
-      usage: |
-        The base type for any member style resource.
-        For example, `/files/{id}/properties/{key}`.
-      type: _base
-      get:
-      put:
-      delete:
+    -   member:
+            usage: |
+                The base type for any member style resource.  For example,
+                `/files/{id}/properties/{key}`.
+            type: _base
+            get:
+            put:
+            delete:
 
-  - collection:
-      usage: |
-        The base type for any collection style resource. For example, `/files`.
-      type: _base
-      get:
-          is: [ paginated: { defaultLimit: 100 }, filterable, expandable ]
-      post:
+    -   collection:
+            usage: |
+                The base type for any collection style resource. For example,
+                `/files`.
+            type: _base
+            get:
+                is: [ paginated: { defaultLimit: 100 }, filterable, expandable ]
+            post:
 
-  - datum:
-      usage: |
-          The base type for any data type resource. For example, `/files/{id}`.
-      type: _base
-      get:
-      head:
-      put:
-      delete:
+    -   datum:
+            usage: |
+                The base type for any data type resource. For example,
+                `/files/{id}`.
+            type: _base
+            get:
+            head:
+            put:
+            delete:
 
-  - informational:
-      usage: |
-          The base type for any informational style resource. For example, how
-          `/features/*` describes the available features in the implementation.
-      type: _base
-      get:
-          is: [ paginated: { defaultLimit: 100 }, filterable ]
+    -   informational:
+            usage: |
+                The base type for any informational style resource. For
+                example, how `/features/*` describes the available features in
+                the implementation.
+            type: _base
+            get:
+                is: [ paginated: { defaultLimit: 100 }, filterable ]
 
 traits:
-    - paginated:
-        queryParameters:
-            offset:
-                type: integer
-                default: 0
-                minimum: 0
-                description: |
-                    The collection index that of the first item in this page.
-                example: 20
-            limit:
-                type: integer
-                default: <<defaultLimit>>
-                minimum: 1
-                description: |
-                    The number of items from the collection in this page.
-                example: 10
-        responses:
-            400:
+    -   paginated:
+            queryParameters:
+                offset:
+                    type: integer
+                    default: 0
+                    minimum: 0
+                    description: |
+                        The collection index of the first item in this page.
+                    example: 20
+                limit:
+                    type: integer
+                    default: <<defaultLimit>>
+                    minimum: 1
+                    description: |
+                        The number of items from the collection in this page.
+                    example: 10
+            responses:
+                400:
 
-    - filterable:
-        queryParameters:
-            q:
-                type: string
-                required: false
-                description: |
-                    TODO: The exact format of search queries is still under
-                    development.
-                example:
-        responses:
-            400:
+    -   filterable:
+            queryParameters:
+                q:
+                    type: string
+                    required: false
+                    description: |
+                        TODO: The exact format of search queries is still under
+                        development.
+                    example:
+            responses:
+                400:
 
-    - expandable:
-        queryParameters:
-            _expand:
-                type: boolean
-                default: false
-                description: |
-                    Expand any resource links to their actual resource.
-        responses:
-            400:
+    -   expandable:
+            queryParameters:
+                _expand:
+                    type: boolean
+                    default: false
+                    description: |
+                        Expand any resource links to their actual resource.
+            responses:
+                400:
 
 /files:
     type: collection
@@ -326,7 +366,7 @@ traits:
         description: |
             Uploads a new file and returns the file resource.
         queryParameters:
-           directoryIds: &directoryIds
+            directoryIds: &directoryIds
                 required: false
                 type: string
                 description: |
@@ -336,7 +376,7 @@ traits:
                     `/files`. Invalid, non-existent, or improperly formated
                     directory ids will be ignored.
                 example: 10, 2, 37
-           filename: &filename
+            filename: &filename
                 required: false
                 type: string
                 description: |
@@ -346,7 +386,7 @@ traits:
                     untitled will be given.
                 example: farm.shp
         headers:
-          Content-Disposition:
+            Content-Disposition:
         body:
             multipart/form-data: &formUpload
                 formParameters:
@@ -796,7 +836,7 @@ traits:
     /file_formats:
         type: informational
         description: |
-            Returns a list of supported file format .
+            Returns a list of supported file formats.
         get:
             description: |
                 Returns a paginated collection of all file formats that are
@@ -812,7 +852,7 @@ traits:
         /transforms:
             type: informational
             description: |
-                Returns a list of supported file format transformations that is
+                Returns a list of supported file format transformations that are
                 supported by the OADA implementation. The results can be limited
                 by an optional query parameter filter.
             get:
@@ -826,4 +866,5 @@ traits:
                     200:
                         body:
                             application/json:
-                                schema: !include schema/supported-file-formats.schema.json
+                                schema: !include |
+                                    schema/supported-file-formats.schema.json
