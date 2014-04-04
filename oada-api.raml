@@ -4,8 +4,16 @@
 # https://github.com/OADA/oada-api-spec/blob/master/LICENSE
 title: Open Ag Data Alliance API
 version: v0.1
-baseUri: https://api.oada.io/{version}
-protocols: [ HTTPS ]
+
+baseUri: https://{rootUri}/{version}
+baseUriParameters:
+    rootUri:
+        description: |
+            The root URI for a particular implementation of OADA. This MUST
+            include a domain and MAY include a path to allow coexistence with
+            other REST APIs.
+        example: api.oada.io, api.oada.io/OADA
+
 documentation:
   - title: Home
     content: |
@@ -17,6 +25,10 @@ documentation:
       focuses on information exchange and facilitates data transformations an
       open heterogeneous environment that supports many legacy, current, and
       future data formats can be embraced.
+  - title: Readme
+    content: !include README.md
+
+protocols: [ HTTPS ]
 schemas:
   - default-file-metadata: !include schema/default-file-metadata.schema.json
 securitySchemes:
@@ -32,276 +44,740 @@ securitySchemes:
                       with the "access_token" query string parameter.
                 oauth-scope:
             responses:
-                401:
+                401: &resp401
                     description: |
                       Bad or expired token. This can happen if the token
                       expired. To fix, you should re-authenticate the user.
-                403:
+                403: &resp403
                     description: |
                       Bad OAuth request (wrong consumer key, bad nonce, expired
                       timestamp...). Unfortunately, re-authenticating the user
                       won't help here.
         settings:
-          authorizationUri: https://www.oada.io/1/oauth2/authorize
-          accessTokenUri: https://auth.oada.io/1/oauth2/token
+          authorizationUri: https://{rootUri}/oauth2/authorize
+          accessTokenUri: https://{rootUri}/oauth2/token
           authorizationGrants: [ token ]
 securedBy: [ oauth_2_0 ]
+
 resourceTypes:
-  - base:
-      get?:
+  - _common:
+      usage: |
+          This should NOT be used for any actual resource. Attribute common
+          across all methods should be defined here.
+      get?: &_common
+        description: "TODO: Write Description" # Reminder in console to document
         responses:
-          400:
-            description: |
-              Bad Request. The request could not be understood by the server
-              due to malformed syntax.
-          401:
-            description: |
-              Unauthorized. The request requires user authentication.
-          404:
+          404?: &_resp404
             description: |
               Not Found. The server has not found anything matching the
               Request-URI.
+            headers: &_commonHeaders
+              X-Rate-Limit-Limit:
+                type: integer
+                required: true
+                description: |
+                  The maximum number of requests allowed per rate-limit window.
+                example: "X-Rate-Limit-Limit: 100"
+              X-Rate-Limit-Remaining:
+                type: integer
+                required: true
+                description: |
+                  The number of remaining requests allowed in the current
+                  rate-limit window.
+                example: "X-Rate-Limit-Remaining: 89"
+              X-Rate-Limit-Reset:
+                type: integer
+                required: true
+                description: |
+                  The number of UTC epoch seconds until the next rate-limit 
+                  window begins.
+                example: "X-Rate-Limit-Reset: 124"
+          429: &_resp429
+            description: |
+              Too Many Requests. The request was rejected due to rate limiting.
+              The request was not processed to determine its validity.
+            headers: *_commonHeaders
+            body:
+              application/json:
+                schema: !!null
+      head?: *_common
+      put?: *_common
+      post?: *_common
+      delete?: *_common
+
+  - _commonGlue:
+      usage: |
+          This should NOT be used for any actual resource. Applies the common
+          attributes to the supported methods. This is a glue layer needed
+          because RAML does not support map merging. This level can be used to
+          require attributes that are required for all resources.
+      type: _common
+      get?:
+        responses:
+          200: &_resp200
+            description: |
+              OK. The request has succeeded. The information returned with the
+              response is dependent on the method used in the request.
+            headers: *_commonHeaders
+          304: &_resp304
+            description: |
+              Not Modified. The result of the request is the same as the cached
+              version at the client.
+            headers: *_commonHeaders
+          400?: &_resp400
+            description: |
+              Bad Request. The request could not be understood by the server
+              due to malformed syntax.
+            headers: *_commonHeaders
+      head?:
+        responses:
+          204: &_resp204
+            description: |
+              No Content. Request was sucessful and there is no content to
+              return.
+            headers: *_commonHeaders
+          400?: *_resp400
+      put?: 
+        responses:
+          200: *_resp200
+          201: &_resp201
+            description: |
+              Created. The request has been fulfilled and resulted in a new
+              resource being created.
+            headers: *_commonHeaders
+          400?: *_resp400
+          415?: &_resp415
+            description: |
+              Unsupported Media Type. The request contains a body with an
+              unsupported media type.
+            headers: *_commonHeaders
       post?:
         responses:
-          201?:
-            description: |
-              The request has been fulfilled and resulted in a new resource
-              being created.
-          403:
-            description: |
-              Forbidden. The server understood the request, but is refusing to
-              fulfill it.
-      put?:
+          201: *_resp201
+          400?: *_resp400
+          415?: *_resp415
+      delete?:
         responses:
-          200?:
+          204: *_resp204
+          409?: &_resp409
             description: |
-              The request has succeeded. The information returned with the
-              response is dependent on the method used in the request.
+                Conflict. The request could not be processed because the
+                resource state is either currently in or would be left in a
+                conflicted state.
+            headers: *_commonHeaders
+
+  - _base:
+      usage: |
+          This should NOT be used for any actual resource. Attributes common to
+          a certain method type across all resources should be defined here.
+      type: _commonGlue
+      get:
+      put?:
+        headers:
+            Content-Length: &contentLengthHeader
+                required: true
+                type: integer
+                description: |
+                    A Content-Length header is required to verify that the
+                    entire transmission was received.
+            Content-MD5: &contentMD5Header
+                required: false
+                type: string
+                description: |
+                    The optional Content-MD5 header is used to verify the
+                    received file is error free. The header is defined in
+                    [RFC1864](http://www.ietf.org/rfc/rfc1864.txt "RFC1864").
+        responses:
+          201: &_locationHeader
+            headers:
+              Location:
+                type: string
+                required: true
+                description: |
+                  The maximum number of requests allowed per rate-limit window.
+      post?:
+        headers:
+            Content-Length: *contentLengthHeader
+            Content-MD5: *contentMD5Header
+        responses:
+          201: *_locationHeader
+
+  - member:
+      usage: |
+          The base type for any member style resource. For example, /files/{id}.
+      type: _base
+      get:
+      put:
+      delete:
+
+  - collection:
+      usage: |
+          The base type for any collection style resource. For example, /files.
+      type: _base
+      get: 
+          is: [ paginated: { defaultLimit: 100 }, filterable, expandable ]
+      post:
+
+  - datum:
+      usage: |
+          The base type for any data type resource. For example, /files/{id}.
+      type: _base
+      get:
+      head:
+      put:
+      delete:
+
+  - informational:
+      usage: |
+          The base type for any informational style resource. For example, how 
+          /features/* describes the available features in the implementation.
+      type: _base
+      get: 
+          is: [ paginated: { defaultLimit: 100 }, filterable ]
+      
+traits:
+    - paginated:
+        queryParameters:
+            offset:
+                type: integer
+                default: 0
+                minimum: 0
+                description: |
+                    The collection index that of the first item in this page.
+                example: 20 
+            limit:
+                type: integer
+                default: <<defaultLimit>>
+                minimum: 1
+                description: |
+                    The number of items from the collection in this page.
+                example: 10
+        responses:
+            400:
+
+    - filterable:
+        queryParameters:
+            q:
+                type: string
+                required: false
+                description: |
+                    TODO: The exact format of search querys are still under
+                    development.
+                example: 
+        responses:
+            400:
+
+    - expandable:
+        queryParameters:
+            _expand:
+                type: boolean
+                default: false
+                description: |
+                    Expand any resource links to their actual resource.
+        responses:
+            400:
+
 /files:
-  description: |
-    Operations to add, update, and delete precision ag files from the
-    growers datastore.
-  /{path}:
-    type: base
-    uriParameters:
-        path:
-          description: |
-            Absolute path to file in the grower datastore.
-          type: string
-    put:
-      description: |
-        Uploads a file using PUT semantics. The preferred HTTP method for this
-        call is PUT. For compatibility with browser environments, the POST HTTP
-        method is also recognized.
-        Note: Providing a Content-Length header set to the size of the uploaded
-          file is required so that the server can verify that it has received
-          the entire file contents.
-      headers:
-        x-oada-file-metadata:
-          displayName: OADA File Metadata
-          description: |
-            System defined and optional platform defined metadata associated
-            with a file.
-          type: string
-          required: false
-          maxLength: 1000
-      queryParameters:
-        file_format:
-          required: false
-          description: |
-            The OEM or precision ag software system file format of the file
-            being put into the grower data store. A best estimate will be used
-            to identify the file format if one is not provided.
-          example:
-        data_type:
-          required: false
-          description: |
-            The precision ag operation or task that was undertaken that
-            represents the data stored in the file. A best estimate will be
-            used to identify the data type if one is not provided.
-          example: yld, soil-sample, plantting, nitrogen, scouting
-        overwrite:
-          required: false
-          type: boolean
-          default: false
-          description: |
-            Determines what happens when there's already a file at the
-            specified path. If true, the existing file will be overwritten by
-            the new one. If false, the new file will be automatically renamed.
-            File version naming schema is left to the provider. The new name
-            can be obtained from the returned metadata.
-      responses:
-          200:
-            body:
-              application/json:
-                schema: !include schema/default-file-metadata.schema.json
+    type: collection
+    description: |
+        Explore and manage files in the data storage.
     get:
-      description: |
-        The specified file's contents at the requested revision. The file can
-        optionally return in an alternate format by setting the file_format
-        query parameter. The HTTP response contains the content metadata in
-        JSON format within an x-oada-file-metadata header.
-      headers:
-        x-oada-file-metadata:
-          displayName: OADA File Metadata
-          description: |
-            System defined and optional platform defined metadata associated
-            with a file.
-          type: string
-          required: false
-          maxLength: 1000
-      queryParameters:
-        file_format:
-          required: false
-          description: |
-            The OEM or precision ag software system file format to return the
-            request file into.
-          example:
-        rev:
-          required: false
-          type: string
-          description: |
-            The revision of the file to retrieve. This defaults to the most
-            recent revision.
-      responses:
-          404:
-            description: |
-              The file wasn't found at the specified path, or wasn't found at
-              the specified rev.
-          501:
-            description: |
-              The file could not be returned in the format requested as defined
-              by the file_format query parameter.
-    delete:
-      description: |
-        Deletes a file and its associated metadata
-      queryParameters:
-        rev:
-          required: false
-          type: string
-          description: |
-            The revision of the file to retrieve. This defaults to the most
-            recent revision.
-      responses:
-          404:
-            description: |
-              The file wasn't found at the specified path, or wasn't found at
-              the specified rev.
-/metadata:
-  description: |
-    Operations to read and write metadata associated with precision ag files in
-    the growers datastore. System defined metadata cannot be modified.
-  /{path}:
-    type: base
-    uriParameters:
-        path:
-          description: |
-            Absolute path to file in the grower datastore.
-          type: string
-    put:
-      description: |
-        Uploads a metadata file using PUT semantics. The preferred HTTP method
-        for this call is PUT. For compatibility with browser environments, the
-        POST HTTP method is also recognized.
-        Note: Providing a Content-Length header set to the size of the uploaded
-          file is required so that the server can verify that it has received
-          the entire file contents.
-    get:
-      description: |
-        The specified file's metadata at the requested revision.
-      queryParameters:
-        rev:
-          required: false
-          type: string
-          description: |
-            If you include a particular revision number, then only the metadata
-            for that revision will be returned. This defaults to the most
-            recent revision.
-      responses:
-          200:
-            body:
-              application/json:
-                schema: !include schema/default-file-metadata.schema.json
-          404:
-            description: |
-              The file wasn't found at the specified path, or wasn't found at
-              the specified rev.
-/search:
-  description: |
-    Returns metadata for all files that match the search criteria. Searches 
-    are limited to the folder path and its sub-folder hierarchy provided in the 
-    call.
-  /{path}:
-    type: base
-    uriParameters:
-      path:
         description: |
-          Absolute path to file in the grower datastore.
-        type: string
-    get:
-      queryParameters:
-        query:
-          description: |
-            The search string. This string is split (on spaces) into individual
-            words. Words can be further split (on =) into key-value pairs.
-            Where the key is a property name defined in the file's metadata and
-            the value is the value of the property.
-            TODO: Consider standardizing on a query syntax such as Lucene
-          required: true
-          type: string
-        limit:
-          description: |
-            Number of search results to return
-          type: integer
-          default: 30
-          maximum: 200
-        offset:
-          description: |
-            The search result at which to start the response.
-          type: integer
-          default: 0
-      responses:
-          200:
+            Returns a paginated collection of all files owned by the currently
+            authenticated user. The results can be limited by an optional query
+            parameter filter.
+        is: [ paginated: {defaultLimit: 100}, filterable ]
+    post:
+        description: |
+            Uploads a new file and returns the file resource.
+        queryParameters:
+           directoryIds: &directoryIds
+                required: false
+                type: string
+                description: |
+                    A comma separated list of directory ids that the file 
+                    will be added to after a successful upload.  If directoryIds 
+                    is left empty, the file will only be discoverable through 
+                    /files. Invalid, non-existent, or improperly formated 
+                    directory ids will be ignored.
+                example: 10, 2, 37
+           filename: &filename
+                required: false
+                type: string
+                description: |
+                    The name of the file after it is created. If this is left
+                    blank then the Content-Disposition header will be checked
+                    for a filename. Otherwise, a name indicating it is 
+                    untitled will be given.
+                example: farm.shp
+        body:
+            multipart/form-data: &formUpload
+                formParameters: 
+                    file:
+                        type: file
+                        required: true
+                        description: |
+                            The data file to be uploaded.
+            application/x-www-form-urlencoded: *formUpload
+            "*/*": 
+        responses:
+            201:
+                headers: 
+                    X-OADA-File-Metadata: &OADAFileMetadata
+                        type: string
+                        description: |
+                            OADA file metadata that can not be directly modified
+                            by the user. For example file creation time, file
+                            modification time, file format, create user, etc.
+            415:
+
+    /{id}:
+        type: datum
+        description: |
+            Add, edit, and delete precision agriculture data files in the data
+            storage.
+        uriParameters:
+            id:
+                type: string
+                description: |
+                    The id of the file in the data storage.
+        get:
+            description: |
+                Returns the contents of the given file.
+            responses:
+                200:
+                    headers:
+                        X-OADA-File-Metadata: *OADAFileMetadata
+                404:
+        head:
+            description: |
+                Returns the headers for the given file.
+            responses:
+                204:
+                    headers:
+                        X-OADA-File-Metadata: *OADAFileMetadata
+                404:
+        put:
+            description: |
+                Create or Update the a file with given file id.
+            responses:
+                200:
+                    headers: 
+                        X-OADA-File-Metadata: *OADAFileMetadata
+                201:
+                    headers: 
+                        X-OADA-File-Metadata: *OADAFileMetadata
+                400:
+                404:
+            queryParameters:
+               directoryIds: *directoryIds
+               filename: *filename
             body:
-              application/json:
-                schema: !include schema/default-file-metadata.schema.json
+                multipart/form-data: *formUpload
+                application/x-www-form-urlencoded: *formUpload
+                "*/*":
+        delete:
+            description: |
+                Delete the specified file and its associated metadata.
+            responses:
+                404:
+
+        /properties:
+            type: collection
+            description: |
+                A per file key-value store that can be used to store any user 
+                generated metadata
+            get:
+                description: |
+                    Returns the key-value store.
+                responses:
+                    404:
+            post:
+                description: |
+                    Adds a single or set of key-value pairs to the store.
+                body:
+                    application/json:
+                        schema: !!null
+                responses:
+                    400:
+                    404:
+                    415:
+
+            /{key}:
+                type: member
+                description: |
+                    Create, Update, and Delete the values of the given key.
+                uriParameters:
+                    key:
+                        type: string
+                        description: |
+                            Key in the given files keystore.
+                get:
+                    description: |
+                        Returns the value of the given key.
+                    responses:
+                        200:
+                            body:
+                                application/json:
+                                    schema: !!null
+                        404:
+                put:
+                    description: |
+                        Update or Create a value under the given key. If the key
+                        already exists the original value will be lost.
+                    body:
+                        application/json:
+                            schema: !!null
+                    responses:
+                        400:
+                        404:
+                        415:
+                delete:
+                    description: |
+                        Delete the given key and its value.
+                    responses:
+                        404:
+    
+        /formats:
+            type: informational
+            get:
+                description: |
+                    Returns a collection of file formats that the given file
+                    can be returned as.
+                body:
+                    application/json:
+                        schema: !!null
+                responses:
+                    404:
+
+            /{format}:
+                type: informational
+                get:
+                    description: |
+                        Returns the given file in the given format.
+                    responses:
+                        404:
+
+/directories:
+    type: collection
+    description: |
+        Explore and manage directories in the data storage.
+    get:
+        description: |
+            Returns a paginated collection of all directories owned by the 
+            currently authenticated user. The results can be limited by an
+            optional query parameter filter.
+        is: [ paginated : {defaultLimit: 100}, filterable ]
+    post:
+        description: |
+            Creates a new directory.
+        body:
+            application/json:
+                schema: !!null
+        responses:
+            201: 
+                headers:
+                    X-OADA-Directory-Metadata: &OADADirectoryMetadata
+                        type: string
+                        description: |
+                            OADA directory metadata that can not be directly 
+                            modified by the user. For example directory creation 
+                            time, directory modification time, create user, etc.
+            400:
+            415:
+
+    /{id}:
+        type: datum
+        description: |
+            Create, Update, and Delete directories in the data storage.
+        uriParameters:
+            id:
+                type: string
+                description: |
+                    id of the file in storage.
+        get:
+            description: |
+                Returns the details of this directory.
+            responses:
+                200:
+                    headers:
+                        X-OADA-Directory-Metadata: *OADADirectoryMetadata
+                404:
+        head:
+            description: 
+                Returns the headers for the given directory.
+            responses: 
+                204:
+                    headers:
+                        X-OADA-Directory-Metadata: *OADADirectoryMetadata
+                404:
+        put:
+            description: |
+                Create or Update a directory with the given id.
+            body:
+                application/json:
+                    schema: !!null
+            responses:
+                200:
+                    headers: 
+                        X-OADA-Directory-Metadata: *OADADirectoryMetadata
+                201:
+                    headers: 
+                        X-OADA-Directory-Metadata: *OADADirectoryMetadata
+                400:
+                404:
+                415:
+        delete:
+            description: |
+                Delete the specified directory. By default you may not
+                delete directories that have children.
+            responses: 
+                404:
+                409:
+                    body:
+                        application/json:
+                            schema: !!null
+
+        /files:
+            type: collection
+            description: |
+                Add, remove, and list files from the given directory.
+            get:
+                description: |
+                    Returns a paginated collection of all files in the given
+                    directory. The results can be limited by an optional query 
+                    parameter filter.
+                is: [ paginated: {defaultLimit: 100}, filterable ]
+                responses:
+                    404:
+            post:
+                description: |
+                    Add a file to the given directory.
+                body:
+                    application/json:
+                        schema: !!null
+                responses:
+                    400:
+                    404:
+                    415:
+
+        /parents:
+            type: collection
+            description: |
+                Add, remove, and list directories that are parents to the 
+                given directory.
+            get:
+                description: |
+                    Returns a paginated collection of all directories that are
+                    parents to the given directory. The results can be limited 
+                    by an optional query parameter filter.
+                is: [ paginated : {defaultLimit: 100}, filterable ]
+                responses:
+                    404:
+            post:
+                description: |
+                    Add a parent directory to the given directory.
+                body:
+                    application/json:
+                        schema: !!null
+                responses:
+                    400:
+                    404:
+                    415:
+            
+        /children:
+            type: collection
+            description: |
+                Add, remove, and list directories that are parents to the 
+                given directory.
+            get:
+                description: |
+                    Returns a paginated collection of all directories that are
+                    children of the given directory. The results can be limited 
+                    by an optional query parameter filter.
+                is: [ paginated : {defaultLimit: 100}, filterable ]
+                responses:
+                    404:
+            post:
+                description: |
+                    Add a child directory to the given directory.
+                body:
+                    application/json:
+                        schema: !!null
+                responses:
+                    400:
+                    404:
+                    415:
+
+/fields:
+    type: collection
+    description: |
+        Explore and manage farm fields data such as field name, boundaries,
+        acreage, etc. Eventually this data will help directly query files and 
+        data.
+    get:
+        description: |
+            Returns a paginated collection of all fields owned by the currently
+            authenticated user. The results can be limited by an optional query
+            parameter filter.
+        is: [ paginated: {defaultLimit: 100}, filterable ]
+    post:
+        description: |
+            Creates a new field.
+        body:
+            application/json:
+                schema: !!null
+        responses:
+            201: 
+                headers:
+                    X-OADA-Fields-Metadata: &OADAFieldsMetadata
+                        type: string
+                        description: |
+                            OADA field metadata that can not be directly 
+                            modified by the user. For example directory creation 
+                            time, directory modification time, create user, etc.
+            400:
+            415:
+        
+    /{id}:
+        type: datum
+        description: |
+            Create, Update, and Delete fields in storage.
+        uriParameters:
+            id:
+                type: string
+                description: |
+                    The id of the field resource
+        get:
+            description: |
+                Returns the field resource.
+            responses:
+                200:
+                    headers:
+                        X-OADA-Fields-Metadata: *OADAFieldsMetadata
+                    body:
+                        application/json:
+                            schema: !!null
+                404:
+        head:
+            description: 
+                Returns the headers for the given field resource.
+            responses: 
+                204:
+                    headers:
+                        X-OADA-Fields-Metadata: *OADAFieldsMetadata
+                404:
+        put:
+            description: |
+                Create or Update a field with the given id.
+            body:
+                application/json:
+                    schema: !!null
+            responses:
+                200:
+                    headers: 
+                        X-OADA-Fields-Metadata: *OADAFieldsMetadata
+                201:
+                    headers: 
+                        X-OADA-Fields-Metadata: *OADAFieldsMetadata
+                400:
+                404:
+                415:
+        delete:
+            description: |
+                Delete the specified field.
+            responses:
+                404:
+
+        /properties:
+            type: collection
+            description: |
+                A per feild key-value store that can be used to store any user
+                generated metadata
+            get:
+                description: |
+                    Returns the key-value store.
+                responses:
+                    404:
+            post:
+                description: |
+                    Adds a single or set of key-value pairs to the store.
+                body:
+                    application/json:
+                        schema: !!null
+                responses:
+                    400:
+                    404:
+                    415:
+            
+            /{key}:
+                type: member
+                description: |
+                    Create, Update, and Delete the values of the given key.
+                uriParameters:
+                    key:
+                        type: string
+                        description: |
+                            Key in the given fields keystore.
+                get:
+                    description: |
+                        Returns the value of the given key.
+                    responses:
+                        200:
+                            body:
+                                application/json:
+                                    schema: !!null
+                        404:
+                put:
+                    description: |
+                        Update or Create a value under the given key. If the key
+                        already exists the original value will be lost.
+                    body:
+                        application/json:
+                            schema: !!null
+                    responses:
+                        400:
+                        404:
+                        415:
+                delete:
+                    description: |
+                        Delete the given key and its value.
+                    responses:
+                        404:
+
 /features:
-  /file_formats:
-    type: base
-    description: |
-      Returns a list of supported file format .
-    get:
-      queryParameters:
-        file_format:
-          type: string
-          required: false
-          description: |
-            Limit the results to the given file formats.
-      responses:
-        200:
-          body:
-            application/json:
-              schema: !include schema/supported-file-formats.schema.json
-  /transforms:
-    type: base
-    description: |
-      Returns if a desired transforms between file formats is supported by ths
-      provider.
-    get:
-      queryParameters:
-        from_file_format:
-          type: string
-          required: false
-          description: |
-            Limit results to all transforms that start with the given file 
-            formats
-        to_file_format:
-          type: string
-          required: false
-          description: |
-            Limit results to all transform that end with the given file formats
-      responses:
-        200:
-          body:
-            application/json:
-              schema: !include schema/supported-file-formats.schema.json
+
+    /file_formats:
+        type: informational
+        description: |
+            Returns a list of supported file format .
+        get:
+            description: |
+                Returns a paginated collection of all file formats that are
+                supported by the OADA implementation. The results can be limited
+                by an optional query parameter filter.
+            is: [ paginated: {defaultLimit: 100}, filterable ]
+            responses:
+                200:
+            body:
+                application/json:
+                    schema: !include schema/supported-file-formats.schema.json
+
+        /transforms:
+            type: informational
+            description: |
+                Returns a list of supported file format transformations that is
+                supported by the OADA implementation. The results can be limited
+                by an optional query parameter filter.
+            get:
+                description: |
+                    Returns a paginated collection of all file formats
+                    transformations that are supported by the OADA
+                    implementation. The results can be limited by an optional
+                    query parameter filter.
+                is: [ paginated: {defaultLimit: 100}, filterable ]
+                responses:
+                    200:
+                        body:
+                            application/json:
+                                schema: !include schema/supported-file-formats.schema.json
