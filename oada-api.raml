@@ -9,24 +9,26 @@ baseUri: https://{rootUri}/{version}
 baseUriParameters:
     rootUri:
         description: |
-            The root URI for a particular implementation of OADA. This MUST
-            include a domain and MAY include a path to allow coexistence with
+            The root URI for a particular implementation of OADA. This *MUST*
+            include a domain and *MAY* include a path to allow coexistence with
             other REST APIs.
         example: api.oada.io, api.oada.io/OADA
 
 documentation:
-  - title: Home
+  - title: Overview
     content: |
       The OADA API is intended to serve as a specification for all providers
       that desire to be OADA compliant. This API does not attempt to define or
-      enforce a single industry data standard.  The goal of this API is to
+      enforce a single industry data standard. The goal of this API is to
       enable interoperability between the many precision ag software systems
       and existing industry data types. By providing an extensible API that
-      focuses on information exchange and facilitates data transformations an
+      focuses on information exchange and facilitates data transformations, an
       open heterogeneous environment that supports many legacy, current, and
       future data formats can be embraced.
   - title: Readme
     content: !include README.md
+  - title: License
+    content: !include LICENSE
 
 protocols: [ HTTPS ]
 schemas:
@@ -62,7 +64,7 @@ securedBy: [ oauth_2_0 ]
 resourceTypes:
   - _common:
       usage: |
-          This should NOT be used for any actual resource. Attribute common
+          This should *NOT* be used for any actual resource. Attributes common
           across all methods should be defined here.
       get?: &_common
         description: "TODO: Write Description" # Reminder in console to document
@@ -89,7 +91,7 @@ resourceTypes:
                 type: integer
                 required: true
                 description: |
-                  The number of UTC epoch seconds until the next rate-limit 
+                  The number of UTC epoch seconds until the next rate-limit
                   window begins.
                 example: "X-Rate-Limit-Reset: 124"
           429: &_resp429
@@ -133,11 +135,11 @@ resourceTypes:
         responses:
           204: &_resp204
             description: |
-              No Content. Request was sucessful and there is no content to
+              No Content. Request was successful and there is no content to
               return.
             headers: *_commonHeaders
           400?: *_resp400
-      put?: 
+      put?:
         responses:
           200: *_resp200
           201: &_resp201
@@ -172,6 +174,28 @@ resourceTypes:
           a certain method type across all resources should be defined here.
       type: _commonGlue
       get:
+        headers:
+          If-None-Match:
+            type: string
+            required: false
+            description: |
+              Cached value received from the server in an `ETag` header the
+              last time a `GET` on this resource returned succeeded.
+              The server will use this to determine if the resource has
+              changed and decide whether to respond with `304`.
+            example: 'If-None-Match: "686897696a7c876b7e"'
+        responses:
+          200:
+            headers:
+              ETag:
+                type: string
+                required: false
+                description: |
+                  An optional opaque identifier assigned by the server to the
+                  specific version of the resource contained in this response.
+                  The client can cache it for inclusion in a future conditional
+                  `GET` on this resource.
+                example: 'ETag: "686897696a7c876b7e"'
       put?:
         headers:
             Content-Length: &contentLengthHeader
@@ -187,6 +211,15 @@ resourceTypes:
                     The optional Content-MD5 header is used to verify the
                     received file is error free. The header is defined in
                     [RFC1864](http://www.ietf.org/rfc/rfc1864.txt "RFC1864").
+            Content-Disposition?: &contentDispositionHeader
+              type: string
+              required: false
+              description: |
+                Can be used to specify, among other things, the desired name of
+                the file to be created by this request.
+                The headers usage in HTTP is defined in
+                [RFC6266](http://www.ietf.org/rfc/rfc6266.txt "RFC6266")
+              example: 'Content-Disposition: attachment; filename="field.shp"'
         responses:
           201: &_locationHeader
             headers:
@@ -199,12 +232,14 @@ resourceTypes:
         headers:
             Content-Length: *contentLengthHeader
             Content-MD5: *contentMD5Header
+            Content-Disposition?: *contentDispositionHeader
         responses:
           201: *_locationHeader
 
   - member:
       usage: |
-          The base type for any member style resource. For example, /files/{id}.
+        The base type for any member style resource.
+        For example, `/files/{id}/properties/{key}`.
       type: _base
       get:
       put:
@@ -212,15 +247,15 @@ resourceTypes:
 
   - collection:
       usage: |
-          The base type for any collection style resource. For example, /files.
+        The base type for any collection style resource. For example, `/files`.
       type: _base
-      get: 
+      get:
           is: [ paginated: { defaultLimit: 100 }, filterable, expandable ]
       post:
 
   - datum:
       usage: |
-          The base type for any data type resource. For example, /files/{id}.
+          The base type for any data type resource. For example, `/files/{id}`.
       type: _base
       get:
       head:
@@ -229,12 +264,12 @@ resourceTypes:
 
   - informational:
       usage: |
-          The base type for any informational style resource. For example, how 
-          /features/* describes the available features in the implementation.
+          The base type for any informational style resource. For example, how
+          `/features/*` describes the available features in the implementation.
       type: _base
-      get: 
+      get:
           is: [ paginated: { defaultLimit: 100 }, filterable ]
-      
+
 traits:
     - paginated:
         queryParameters:
@@ -244,7 +279,7 @@ traits:
                 minimum: 0
                 description: |
                     The collection index that of the first item in this page.
-                example: 20 
+                example: 20
             limit:
                 type: integer
                 default: <<defaultLimit>>
@@ -261,9 +296,9 @@ traits:
                 type: string
                 required: false
                 description: |
-                    TODO: The exact format of search querys are still under
+                    TODO: The exact format of search queries is still under
                     development.
-                example: 
+                example:
         responses:
             400:
 
@@ -295,10 +330,10 @@ traits:
                 required: false
                 type: string
                 description: |
-                    A comma separated list of directory ids that the file 
-                    will be added to after a successful upload.  If directoryIds 
-                    is left empty, the file will only be discoverable through 
-                    /files. Invalid, non-existent, or improperly formated 
+                    A comma separated list of directory ids that the file
+                    will be added to after a successful upload. If directoryIds
+                    is left empty, the file will only be discoverable through
+                    `/files`. Invalid, non-existent, or improperly formated
                     directory ids will be ignored.
                 example: 10, 2, 37
            filename: &filename
@@ -307,22 +342,24 @@ traits:
                 description: |
                     The name of the file after it is created. If this is left
                     blank then the Content-Disposition header will be checked
-                    for a filename. Otherwise, a name indicating it is 
+                    for a filename. Otherwise, a name indicating it is
                     untitled will be given.
                 example: farm.shp
+        headers:
+          Content-Disposition:
         body:
             multipart/form-data: &formUpload
-                formParameters: 
+                formParameters:
                     file:
                         type: file
                         required: true
                         description: |
                             The data file to be uploaded.
             application/x-www-form-urlencoded: *formUpload
-            "*/*": 
+            "*/*":
         responses:
             201:
-                headers: 
+                headers:
                     X-OADA-File-Metadata: &OADAFileMetadata
                         type: string
                         description: |
@@ -359,13 +396,15 @@ traits:
                 404:
         put:
             description: |
-                Create or Update the a file with given file id.
+                Creates or Updates a file with given file id.
+            headers:
+              Content-Disposition:
             responses:
                 200:
-                    headers: 
+                    headers:
                         X-OADA-File-Metadata: *OADAFileMetadata
                 201:
-                    headers: 
+                    headers:
                         X-OADA-File-Metadata: *OADAFileMetadata
                 400:
                 404:
@@ -378,14 +417,14 @@ traits:
                 "*/*":
         delete:
             description: |
-                Delete the specified file and its associated metadata.
+                Deletes the specified file and its associated metadata.
             responses:
                 404:
 
         /properties:
             type: collection
             description: |
-                A per file key-value store that can be used to store any user 
+                A per file key-value store that can be used to store any user
                 generated metadata
             get:
                 description: |
@@ -423,8 +462,8 @@ traits:
                         404:
                 put:
                     description: |
-                        Update or Create a value under the given key. If the key
-                        already exists the original value will be lost.
+                        Updates or Creates a value under the given key. If the
+                        key already exists, the original value will be lost.
                     body:
                         application/json:
                             schema: !!null
@@ -434,10 +473,10 @@ traits:
                         415:
                 delete:
                     description: |
-                        Delete the given key and its value.
+                        Deletes the given key and its value.
                     responses:
                         404:
-    
+
         /formats:
             type: informational
             get:
@@ -464,7 +503,7 @@ traits:
         Explore and manage directories in the data storage.
     get:
         description: |
-            Returns a paginated collection of all directories owned by the 
+            Returns a paginated collection of all directories owned by the
             currently authenticated user. The results can be limited by an
             optional query parameter filter.
         is: [ paginated : {defaultLimit: 100}, filterable ]
@@ -475,13 +514,13 @@ traits:
             application/json:
                 schema: !!null
         responses:
-            201: 
+            201:
                 headers:
                     X-OADA-Directory-Metadata: &OADADirectoryMetadata
                         type: string
                         description: |
-                            OADA directory metadata that can not be directly 
-                            modified by the user. For example directory creation 
+                            OADA directory metadata that can not be directly
+                            modified by the user. For example directory creation
                             time, directory modification time, create user, etc.
             400:
             415:
@@ -504,34 +543,41 @@ traits:
                         X-OADA-Directory-Metadata: *OADADirectoryMetadata
                 404:
         head:
-            description: 
+            description:
                 Returns the headers for the given directory.
-            responses: 
+            responses:
                 204:
                     headers:
                         X-OADA-Directory-Metadata: *OADADirectoryMetadata
                 404:
         put:
             description: |
-                Create or Update a directory with the given id.
+                Creates or Updates a directory with the given id.
             body:
                 application/json:
                     schema: !!null
             responses:
                 200:
-                    headers: 
+                    headers:
                         X-OADA-Directory-Metadata: *OADADirectoryMetadata
                 201:
-                    headers: 
+                    headers:
                         X-OADA-Directory-Metadata: *OADADirectoryMetadata
                 400:
                 404:
                 415:
         delete:
             description: |
-                Delete the specified directory. By default you may not
+                Deletes the specified directory. By default you may not
                 delete directories that have children.
-            responses: 
+            queryParameters:
+                _recursive:
+                    type: boolean
+                    default: false
+                    description: |
+                        Recursively delete the directory's children,
+                        in addition to deleting the directory.
+            responses:
                 404:
                 409:
                     body:
@@ -545,14 +591,14 @@ traits:
             get:
                 description: |
                     Returns a paginated collection of all files in the given
-                    directory. The results can be limited by an optional query 
+                    directory. The results can be limited by an optional query
                     parameter filter.
                 is: [ paginated: {defaultLimit: 100}, filterable ]
                 responses:
                     404:
             post:
                 description: |
-                    Add a file to the given directory.
+                    Adds a file to the given directory.
                 body:
                     application/json:
                         schema: !!null
@@ -564,19 +610,19 @@ traits:
         /parents:
             type: collection
             description: |
-                Add, remove, and list directories that are parents to the 
+                Add, remove, and list directories that are parents to the
                 given directory.
             get:
                 description: |
                     Returns a paginated collection of all directories that are
-                    parents to the given directory. The results can be limited 
+                    parents to the given directory. The results can be limited
                     by an optional query parameter filter.
                 is: [ paginated : {defaultLimit: 100}, filterable ]
                 responses:
                     404:
             post:
                 description: |
-                    Add a parent directory to the given directory.
+                    Adds a parent directory to the given directory.
                 body:
                     application/json:
                         schema: !!null
@@ -584,23 +630,23 @@ traits:
                     400:
                     404:
                     415:
-            
+
         /children:
             type: collection
             description: |
-                Add, remove, and list directories that are parents to the 
+                Add, remove, and list directories that are parents to the
                 given directory.
             get:
                 description: |
                     Returns a paginated collection of all directories that are
-                    children of the given directory. The results can be limited 
+                    children of the given directory. The results can be limited
                     by an optional query parameter filter.
                 is: [ paginated : {defaultLimit: 100}, filterable ]
                 responses:
                     404:
             post:
                 description: |
-                    Add a child directory to the given directory.
+                    Adds a child directory to the given directory.
                 body:
                     application/json:
                         schema: !!null
@@ -613,7 +659,7 @@ traits:
     type: collection
     description: |
         Explore and manage farm fields data such as field name, boundaries,
-        acreage, etc. Eventually this data will help directly query files and 
+        acreage, etc. Eventually this data will help directly query files and
         data.
     get:
         description: |
@@ -628,17 +674,17 @@ traits:
             application/json:
                 schema: !!null
         responses:
-            201: 
+            201:
                 headers:
                     X-OADA-Fields-Metadata: &OADAFieldsMetadata
                         type: string
                         description: |
-                            OADA field metadata that can not be directly 
-                            modified by the user. For example directory creation 
+                            OADA field metadata that can not be directly
+                            modified by the user. For example directory creation
                             time, directory modification time, create user, etc.
             400:
             415:
-        
+
     /{id}:
         type: datum
         description: |
@@ -660,39 +706,39 @@ traits:
                             schema: !!null
                 404:
         head:
-            description: 
+            description:
                 Returns the headers for the given field resource.
-            responses: 
+            responses:
                 204:
                     headers:
                         X-OADA-Fields-Metadata: *OADAFieldsMetadata
                 404:
         put:
             description: |
-                Create or Update a field with the given id.
+                Creates or Updates the field with the given id.
             body:
                 application/json:
                     schema: !!null
             responses:
                 200:
-                    headers: 
+                    headers:
                         X-OADA-Fields-Metadata: *OADAFieldsMetadata
                 201:
-                    headers: 
+                    headers:
                         X-OADA-Fields-Metadata: *OADAFieldsMetadata
                 400:
                 404:
                 415:
         delete:
             description: |
-                Delete the specified field.
+                Deletes the specified field.
             responses:
                 404:
 
         /properties:
             type: collection
             description: |
-                A per feild key-value store that can be used to store any user
+                A per field key-value store that can be used to store any user
                 generated metadata
             get:
                 description: |
@@ -709,7 +755,7 @@ traits:
                     400:
                     404:
                     415:
-            
+
             /{key}:
                 type: member
                 description: |
@@ -730,8 +776,8 @@ traits:
                         404:
                 put:
                     description: |
-                        Update or Create a value under the given key. If the key
-                        already exists the original value will be lost.
+                        Updates or Creates the value under the given key. If
+                        the key already exists the original value will be lost.
                     body:
                         application/json:
                             schema: !!null
@@ -741,7 +787,7 @@ traits:
                         415:
                 delete:
                     description: |
-                        Delete the given key and its value.
+                        Deletes the given key and its value.
                     responses:
                         404:
 
