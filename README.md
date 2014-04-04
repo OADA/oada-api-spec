@@ -10,6 +10,11 @@ The current version of the OADA API specification is intended to be a draft revi
 
 The draft specification has been defined in the RESTful API Modeling Language ([RAML](http://raml.org/)). The draft API specification in its entirety can be found here: [oada-api.raml](oada-api.raml)
 
+The draft specification can also be viewed with RAML api-console project developed by [mulesoft/api-console](https://github.com/mulesoft/api-console). A OADA specific version that reads directly from the OADA github repository can be found at the following links:
+
+- [Most recent draft release](http://openag.io/api-console/?raml=https://api.github.com/repos/OADA/oada-api-spec/contents/oada-api.raml)
+- [Development draft](http://openag.io/api-console/?raml=https://api.github.com/repos/OADA/oada-api-spec/contents/oada-api.raml?ref=raml/v0_2)
+
 ## Wrappers and example code
  * [Sinatra OADA API Impl](https://github.com/OADA/oada-api-sinatra-impl)
 
