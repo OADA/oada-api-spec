@@ -3,7 +3,7 @@
 # The MIT License (MIT)
 # https://github.com/OADA/oada-api-spec/blob/master/LICENSE
 title: Open Ag Data Alliance API
-version: v0.1
+version: v0.2
 
 baseUri: https://{rootUri}/{version}
 baseUriParameters:
@@ -71,12 +71,13 @@ resourceTypes:
                 common across all methods should be defined here.
             get?: &_common
                 description: |
-                    "TODO: Write Description" # Reminder in console to document
+                    **TODO**: Write Method Description
                 responses:
-                    404?: &_resp404
+                    200?: &_resp200
                         description: |
-                            Not Found. The server has not found anything
-                            matching the Request-URI.
+                            OK. The request has succeeded. The information
+                            returned with the response is dependent on the
+                            method used in the request.
                         headers: &_commonHeaders
                             X-Rate-Limit-Limit:
                                 type: integer
@@ -99,6 +100,11 @@ resourceTypes:
                                     The number of UTC epoch seconds until the
                                     next rate-limit window begins.
                                 example: "X-Rate-Limit-Reset: 124"
+                    404?: &_resp404
+                        description: |
+                            Not Found. The server has not found anything
+                            matching the Request-URI.
+                        headers: *_commonHeaders
                     429: &_resp429
                         description: |
                             Too Many Requests. The request was rejected due to
@@ -112,6 +118,7 @@ resourceTypes:
             put?: *_common
             post?: *_common
             delete?: *_common
+            patch?: *_common
 
     -   _commonGlue:
             usage: |
@@ -122,13 +129,16 @@ resourceTypes:
                 all resources.
             type: _common
             get?:
-                responses:
-                    200: &_resp200
+                headers:
+                    Accept:
+                        type: string
+                        required: true
                         description: |
-                            OK. The request has succeeded. The information
-                            returned with the response is dependent on the
-                            method used in the request.
-                        headers: *_commonHeaders
+                            Used to specify certain media types which are
+                            acceptable in the response.
+                        example: 'Accept: application/json, application/xml'
+                responses:
+                    200: *_resp200
                     304: &_resp304
                         description: |
                             Not Modified. The result of the request is the same
@@ -156,7 +166,7 @@ resourceTypes:
                             resulted in a new resource being created.
                         headers: *_commonHeaders
                     400?: *_resp400
-                    412:
+                    412: &_resp412
                         description: |
                             One or more of the preconditions given in the
                             request headers was not met. The request was not
@@ -181,6 +191,10 @@ resourceTypes:
                             because the resource state is either currently in
                             or would be left in a conflicted state.
                         headers: *_commonHeaders
+            patch?:
+                responses:
+                    409: *_resp409
+                    412: *_resp412
 
     -   _base:
             usage: |
@@ -207,12 +221,19 @@ resourceTypes:
                                 type: string
                                 required: true
                                 description: |
-                                    An optional opaque identifier assigned by
+                                    An opaque identifier assigned by
                                     the server to the specific version of the
                                     resource contained in this response.  The
                                     client can cache it for inclusion in a
                                     future conditional `GET` on this resource.
                                 example: 'ETag: "686897696a7c876b7e"'
+                            Content-Type: &contentTypeHeader
+                                type: string
+                                required: true
+                                description: |
+                                    An indicator of the media type of the
+                                    response body.
+                                example: 'Content-Type: application/json'
             head?:
                 responses:
                     200:
@@ -220,6 +241,7 @@ resourceTypes:
                             ETag: *etagHeader 
             put?:
                 headers:
+                    Content-Type: *contentTypeHeader
                     Content-Length: &contentLengthHeader
                         required: true
                         type: integer
@@ -267,17 +289,42 @@ resourceTypes:
                                     rate-limit window.
             post?:
                 headers:
+                    Content-Type: *contentTypeHeader
                     Content-Length: *contentLengthHeader
                     Content-MD5: *contentMD5Header
                     Content-Disposition?: *contentDispositionHeader
                 responses:
                     201: *_locationHeader
+            patch?:
+                headers:
+                    Content-Type: *contentTypeHeader
+                    If-Match: *ifMatchHeader
+                    Content-Length: *contentLengthHeader
+                    Content-MD5: *contentMD5Header
+
+    -   _basePatchable:
+            type: _base
+            usage: |
+                This should NOT be used for any actual resource. Adds patch
+                support to the `_base` type.
+            patch:
+            get:
+                responses:
+                    200:
+                        headers:
+                            Accept-Patch:
+                                type: string
+                                required: true
+                                description: |
+                                    Patch formats accepted, as defined in
+                                    [RFC5789][RFC].
+                                    [RFC]: http://www.ietf.org/rfc/rfc5789.txt "RFC5789"
 
     -   member:
             usage: |
                 The base type for any member style resource.  For example,
-                `/files/{id}/properties/{key}`.
-            type: _base
+                `/resources/{resourceId}/properties/{key}`.
+            type: _basePatchable
             get:
             put:
             delete:
@@ -285,7 +332,7 @@ resourceTypes:
     -   collection:
             usage: |
                 The base type for any collection style resource. For example,
-                `/files`.
+                `/resources`.
             type: _base
             get:
                 is: [ paginated: { defaultLimit: 100 }, filterable, expandable ]
@@ -295,10 +342,18 @@ resourceTypes:
             usage: |
                 The base type for any data type resource. For example,
                 `/files/{id}`.
-            type: _base
+            type: _basePatchable
             get:
             head:
             put:
+            delete:
+
+    -   reference:
+            usage: |
+                The base type for resources which reference an actual resource
+                located elsewhere.
+            type: _base
+            get:
             delete:
 
     -   informational:
@@ -352,7 +407,7 @@ traits:
             responses:
                 400:
 
-/files:
+/resources:
     type: collection
     description: |
         Explore and manage files in the data storage.
@@ -408,16 +463,16 @@ traits:
                             modification time, file format, create user, etc.
             415:
 
-    /{id}:
+    /{resourceId}:
         type: datum
         description: |
             Add, edit, and delete precision agriculture data files in the data
             storage.
         uriParameters:
-            id:
+            resourceId:
                 type: string
                 description: |
-                    The id of the file in the data storage.
+                    The id of this resource in the data storage.
         get:
             description: |
                 Returns the contents of the given file.
@@ -460,6 +515,11 @@ traits:
                 Deletes the specified file and its associated metadata.
             responses:
                 404:
+
+        /blob:
+            type: datum
+            description: |
+                 Binary contents of the file corresponding to this resource.
 
         /properties:
             type: collection
@@ -537,116 +597,6 @@ traits:
                     responses:
                         404:
 
-/directories:
-    type: collection
-    description: |
-        Explore and manage directories in the data storage.
-    get:
-        description: |
-            Returns a paginated collection of all directories owned by the
-            currently authenticated user. The results can be limited by an
-            optional query parameter filter.
-        is: [ paginated : {defaultLimit: 100}, filterable ]
-    post:
-        description: |
-            Creates a new directory.
-        body:
-            application/json:
-                schema: !!null
-        responses:
-            201:
-                headers:
-                    X-OADA-Directory-Metadata: &OADADirectoryMetadata
-                        type: string
-                        description: |
-                            OADA directory metadata that can not be directly
-                            modified by the user. For example directory creation
-                            time, directory modification time, create user, etc.
-            400:
-            415:
-
-    /{id}:
-        type: datum
-        description: |
-            Create, Update, and Delete directories in the data storage.
-        uriParameters:
-            id:
-                type: string
-                description: |
-                    id of the file in storage.
-        get:
-            description: |
-                Returns the details of this directory.
-            responses:
-                200:
-                    headers:
-                        X-OADA-Directory-Metadata: *OADADirectoryMetadata
-                404:
-        head:
-            description:
-                Returns the headers for the given directory.
-            responses:
-                204:
-                    headers:
-                        X-OADA-Directory-Metadata: *OADADirectoryMetadata
-                404:
-        put:
-            description: |
-                Creates or Updates a directory with the given id.
-            body:
-                application/json:
-                    schema: !!null
-            responses:
-                200:
-                    headers:
-                        X-OADA-Directory-Metadata: *OADADirectoryMetadata
-                201:
-                    headers:
-                        X-OADA-Directory-Metadata: *OADADirectoryMetadata
-                400:
-                404:
-                415:
-        delete:
-            description: |
-                Deletes the specified directory. By default you may not
-                delete directories that have children.
-            queryParameters:
-                _recursive:
-                    type: boolean
-                    default: false
-                    description: |
-                        Recursively delete the directory's children,
-                        in addition to deleting the directory.
-            responses:
-                404:
-                409:
-                    body:
-                        application/json:
-                            schema: !!null
-
-        /files:
-            type: collection
-            description: |
-                Add, remove, and list files from the given directory.
-            get:
-                description: |
-                    Returns a paginated collection of all files in the given
-                    directory. The results can be limited by an optional query
-                    parameter filter.
-                is: [ paginated: {defaultLimit: 100}, filterable ]
-                responses:
-                    404:
-            post:
-                description: |
-                    Adds a file to the given directory.
-                body:
-                    application/json:
-                        schema: !!null
-                responses:
-                    400:
-                    404:
-                    415:
-
         /parents:
             type: collection
             description: |
@@ -671,6 +621,15 @@ traits:
                     404:
                     415:
 
+            /{parentId}:
+                type: reference
+                uriParameters:
+                    parentId:
+                        type: string
+                        description: |
+                            The id of a folder resource containing this
+                            resource.
+
         /children:
             type: collection
             description: |
@@ -687,6 +646,7 @@ traits:
             post:
                 description: |
                     Adds a child directory to the given directory.
+                    Returns `400` if adding a child to a file resource.
                 body:
                     application/json:
                         schema: !!null
@@ -695,12 +655,35 @@ traits:
                     404:
                     415:
 
-/fields:
+            /{childId}:
+                type: reference
+
+        /permmissions:
+            type: collection
+            description: |
+                Add, remove, and list sharing permissions of this resource.
+
+                There are three permission levels:
+
+                - owner
+                - reader
+                - writer
+
+                There are four permission types:
+
+                - user - local user id
+                - domain - all users of a particular identity provider
+                - anyone - publicly available
+                - group - user created grouping of other users (`/groups`)
+
+            /{permissionId}:
+                type: member
+
+/configurations:
     type: collection
     description: |
-        Explore and manage farm fields data such as field name, boundaries,
-        acreage, etc. Eventually this data will help directly query files and
-        data.
+        Explore and manage farm configuration data such as fields, machines,
+        etc. Eventually this data will help directly query files and data.
     get:
         description: |
             Returns a paginated collection of all fields owned by the currently
@@ -725,15 +708,8 @@ traits:
             400:
             415:
 
-    /{id}:
-        type: datum
-        description: |
-            Create, Update, and Delete fields in storage.
-        uriParameters:
-            id:
-                type: string
-                description: |
-                    The id of the field resource
+    /{configurationKey}: &_configurationKey
+        type: member
         get:
             description: |
                 Returns the field resource.
@@ -831,9 +807,44 @@ traits:
                     responses:
                         404:
 
+    # Example standard `configurationKey`s
+    /fields: *_configurationKey
+    /machines: *_configurationKey
+
+/users:
+    type: collection
+    description: |
+        The list of all users known to the current user.
+
+    /{userId}:
+        type: member
+        description: |
+            A document describing various information about a given user.
+
+/groups:
+    type: collection
+    description: |
+        The list of all groups defined by the current user.
+
+    /{groupId}:
+        type: member
+        description: |
+            A document listing the user in a given group.
+
+/tokens:
+    type: collection
+    description: |
+        The list of all active tokens for the current user.
+
+    /{tokenId}:
+        type: member
+        description: |
+            A document describing the details of the token;
+            assignee, scope, expiration, etc.
+
 /features:
 
-    /file_formats:
+    /fileFormats:
         type: informational
         description: |
             Returns a list of supported file formats.
@@ -868,3 +879,21 @@ traits:
                             application/json:
                                 schema: !include |
                                     schema/supported-file-formats.schema.json
+
+/.well-known:
+
+    /oada-configuration:
+        type: informational
+        description: |
+            JSON document used to discover the specific implementation's OADA
+            configuration.
+
+            See [RFC5785][RFC].
+            [RFC]: http://www.ietf.org/rfc/rfc5785.txt "RFC5785"
+
+    /openid-configuration:
+        type: informational
+        description: |
+            Defined in [OpenID Connect Discovery 1.0][openid].
+            [openid]: http://openid.net/specs/openid-connect-discovery-1_0.html#WellKnownContents "OpenID Connect Discovery 1.0"
+
