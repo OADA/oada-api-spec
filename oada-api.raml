@@ -861,25 +861,27 @@ traits:
                 application/json:
                     schema: !include schema/supported-file-formats.schema.json
 
-        /transforms:
-            type: informational
-            description: |
-                Returns a list of supported file format transformations that are
-                supported by the OADA implementation. The results can be limited
-                by an optional query parameter filter.
-            get:
+        /{fileFormatId}:
+
+            /transforms:
+                type: informational
                 description: |
-                    Returns a paginated collection of all file formats
-                    transformations that are supported by the OADA
-                    implementation. The results can be limited by an optional
-                    query parameter filter.
-                is: [ paginated: {defaultLimit: 100}, filterable ]
-                responses:
-                    200:
-                        body:
-                            application/json:
-                                schema: !include |
-                                    schema/supported-file-formats.schema.json
+                    Returns a list of supported file format transformations that
+                    are supported by the OADA implementation. The results can be
+                    limited by an optional query parameter filter.
+                get:
+                    description: |
+                        Returns a paginated collection of all file formats
+                        transformations that are supported by the OADA
+                        implementation. The results can be limited by an
+                        optional query parameter filter.
+                    is: [ paginated: {defaultLimit: 100}, filterable ]
+                    responses:
+                        200:
+                            body:
+                                application/json:
+                                    schema: !include |
+                                        schema/supported-file-formats.schema.json
 
 /.well-known:
 
