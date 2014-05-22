@@ -831,16 +831,17 @@ traits:
         description: |
             A document listing the user in a given group.
 
-/tokens:
+/authorizations:
     type: collection
     description: |
-        The list of all active tokens for the current user.
+        The list of all active authorizations, e.g., tokens, for the current 
+        user.
 
-    /{tokenId}:
+    /{authorizationId}:
         type: member
         description: |
-            A document describing the details of the token;
-            assignee, scope, expiration, etc.
+            A document describing the details of a particular authorization.
+            For example: assignee, scope, expiration time, etc.
 
 /features:
 
