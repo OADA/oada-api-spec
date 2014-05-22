@@ -33,8 +33,8 @@ documentation:
 
 protocols: [ HTTPS ]
 schemas:
-    -   default-file-metadata: !include |
-            schema/default-file-metadata.schema.json
+    -   default-resource-data: !include |
+            schema/default-resource-data.schema.json
 securitySchemes:
     -   oauth_2_0:
             description: |
@@ -253,7 +253,7 @@ resourceTypes:
                         type: string
                         description: |
                             The optional Content-MD5 header is used to verify
-                            the received file is error free. The header is
+                            the received resource is error free. The header is
                             defined in [RFC1864][RFC].
                             [RFC]: http://www.ietf.org/rfc/rfc1864.txt "RFC1864"
                     Content-Disposition?: &contentDispositionHeader
@@ -261,7 +261,7 @@ resourceTypes:
                         required: false
                         description: |
                             Can be used to specify, among other things, the
-                            desired name of the file to be created by this
+                            desired name of the resource to be created by this
                             request.  The headers usage in HTTP is defined in
                             [RFC6266][RFC].
                             [RFC]: http://www.ietf.org/rfc/rfc6266.txt "RFC6266"
@@ -341,7 +341,7 @@ resourceTypes:
     -   datum:
             usage: |
                 The base type for any data type resource. For example,
-                `/files/{id}`.
+                `/resources/{id}`.
             type: _basePatchable
             get:
             head:
@@ -410,34 +410,34 @@ traits:
 /resources:
     type: collection
     description: |
-        Explore and manage files in the data storage.
+        Explore and manage resources in the data storage.
     get:
         description: |
-            Returns a paginated collection of all files owned by the currently
-            authenticated user. The results can be limited by an optional query
-            parameter filter.
+            Returns a paginated collection of all resources owned by the
+            currently authenticated user. The results can be limited by an
+            optional query parameter filter.
         is: [ paginated: {defaultLimit: 100}, filterable ]
     post:
         description: |
-            Uploads a new file and returns the file resource.
+            Uploads a new resource and returns the resulting document. 
         queryParameters:
             directoryIds: &directoryIds
                 required: false
                 type: string
                 description: |
-                    A comma separated list of directory ids that the file
+                    A comma separated list of directory ids that the resource 
                     will be added to after a successful upload. If directoryIds
-                    is left empty, the file will only be discoverable through
-                    `/files`. Invalid, non-existent, or improperly formated
-                    directory ids will be ignored.
+                    is left empty, the resource will only be discoverable
+                    through `/resource`. Invalid, non-existent, or improperly
+                    formated directory ids will be ignored.
                 example: 10, 2, 37
-            filename: &filename
+            name: &name
                 required: false
                 type: string
                 description: |
-                    The name of the file after it is created. If this is left
-                    blank then the Content-Disposition header will be checked
-                    for a filename. Otherwise, a name indicating it is
+                    The name of the resource after it is created. If this is
+                    left blank then the Content-Disposition header will be
+                    checked for a name. Otherwise, a name indicating it is
                     untitled will be given.
                 example: farm.shp
         headers:
@@ -445,29 +445,29 @@ traits:
         body:
             multipart/form-data: &formUpload
                 formParameters:
-                    file:
-                        type: file
+                    blob:
+                        type: file 
                         required: true
                         description: |
-                            The data file to be uploaded.
+                            The data blob to be uploaded.
             application/x-www-form-urlencoded: *formUpload
             "*/*":
         responses:
             201:
                 headers:
-                    X-OADA-File-Metadata: &OADAFileMetadata
+                    X-OADA-Resource-Properties: &OADAResourceProperties
                         type: string
                         description: |
-                            OADA file metadata that can not be directly modified
-                            by the user. For example file creation time, file
-                            modification time, file format, create user, etc.
+                            OADA resource properties that can not be directly
+                            modified by the user. For example resource creation
+                            time, modification time, format, create
+                            user, etc.
             415:
 
     /{resourceId}:
         type: datum
         description: |
-            Add, edit, and delete precision agriculture data files in the data
-            storage.
+            Add, edit, and delete resources in storage.
         uriParameters:
             resourceId:
                 type: string
@@ -475,57 +475,111 @@ traits:
                     The id of this resource in the data storage.
         get:
             description: |
-                Returns the contents of the given file.
+                Returns the contents of the given resource.
             responses:
                 200:
                     headers:
-                        X-OADA-File-Metadata: *OADAFileMetadata
+                        X-OADA-Resource-Properties: *OADAResourceProperties
+                204:
+                    headers:
+                        X-OADA-Resource-Properties: *OADAResourceProperties
                 404:
         head:
             description: |
-                Returns the headers for the given file.
+                Returns the headers for the given resource.
             responses:
+                200:
+                    headers:
+                        X-OADA-Resource-Properties: *OADAResourceProperties
                 204:
                     headers:
-                        X-OADA-File-Metadata: *OADAFileMetadata
+                        X-OADA-Resource-Properties: *OADAResourceProperties
                 404:
         put:
             description: |
-                Creates or Updates a file with given file id.
+                Creates or Updates a resource with given resource id.
             headers:
               Content-Disposition:
             responses:
                 200:
                     headers:
-                        X-OADA-File-Metadata: *OADAFileMetadata
+                        X-OADA-Resource-Properties: *OADAResourceProperties
                 201:
                     headers:
-                        X-OADA-File-Metadata: *OADAFileMetadata
+                        X-OADA-Resource-Properties: *OADAResourceProperties
                 400:
                 404:
             queryParameters:
                directoryIds: *directoryIds
-               filename: *filename
+               name: *name
             body:
                 multipart/form-data: *formUpload
                 application/x-www-form-urlencoded: *formUpload
                 "*/*":
         delete:
             description: |
-                Deletes the specified file and its associated metadata.
+                Deletes the specified resoruce and its associated data.
             responses:
                 404:
 
         /blob:
             type: datum
             description: |
-                 Binary contents of the file corresponding to this resource.
+                 Binary contents of the resource.
+            get:
+                description: |
+                    Returns the contents of the given resource's blob.
+                responses:
+                    200:
+                        headers:
+                            X-OADA-Resource-Properties: *OADAResourceProperties
+                    204:
+                        headers:
+                            X-OADA-Resource-Properties: *OADAResourceProperties
+                    404:
+            head:
+                description: |
+                    Returns the headers for the given resource's blob.
+                responses:
+                    200:
+                        headers:
+                            X-OADA-Resource-Properties: *OADAResourceProperties
+                    204:
+                        headers:
+                            X-OADA-Resource-Properties: *OADAResourceProperties
+                    404:
+            put:
+                description: |
+                    Creates or Updates a resource's blob.
+                headers:
+                  Content-Disposition:
+                responses:
+                    200:
+                        headers:
+                            X-OADA-Resource-Properties: *OADAResourceProperties
+                    201:
+                        headers:
+                            X-OADA-Resource-Properties: *OADAResourceProperties
+                    400:
+                    404:
+                queryParameters:
+                   directoryIds: *directoryIds
+                   name: *name
+                body:
+                    multipart/form-data: *formUpload
+                    application/x-www-form-urlencoded: *formUpload
+                    "*/*":
+            delete:
+                description: |
+                    Deletes the specified resources's blob.
+                responses:
+                    404:
 
-        /properties:
+        /data:
             type: collection
             description: |
-                A per file key-value store that can be used to store any user
-                generated metadata
+                A per resource key-value store that can be used to store any
+                user generated data
             get:
                 description: |
                     Returns the key-value store.
@@ -550,7 +604,7 @@ traits:
                     key:
                         type: string
                         description: |
-                            Key in the given files keystore.
+                            Key in the given resource data keystore.
                 get:
                     description: |
                         Returns the value of the given key.
@@ -581,8 +635,8 @@ traits:
             type: informational
             get:
                 description: |
-                    Returns a collection of file formats that the given file
-                    can be returned as.
+                    Returns a collection of resource formats that the given 
+                    resource can be returned as.
                 body:
                     application/json:
                         schema: !!null
@@ -593,7 +647,7 @@ traits:
                 type: informational
                 get:
                     description: |
-                        Returns the given file in the given format.
+                        Returns the referenced resource in the given format.
                     responses:
                         404:
 
@@ -646,7 +700,7 @@ traits:
             post:
                 description: |
                     Adds a child directory to the given directory.
-                    Returns `400` if adding a child to a file resource.
+                    Returns `400` if adding a child to a resource with a blob.
                 body:
                     application/json:
                         schema: !!null
@@ -683,7 +737,7 @@ traits:
     type: collection
     description: |
         Explore and manage farm configuration data such as fields, machines,
-        etc. Eventually this data will help directly query files and data.
+        etc. Eventually this data will help directly query resources. 
     get:
         description: |
             Returns a paginated collection of all fields owned by the currently
@@ -702,7 +756,7 @@ traits:
                     X-OADA-Fields-Metadata: &OADAFieldsMetadata
                         type: string
                         description: |
-                            OADA field metadata that can not be directly
+                            OADA field data that can not be directly
                             modified by the user. For example directory creation
                             time, directory modification time, create user, etc.
             400:
@@ -726,7 +780,7 @@ traits:
                 Returns the headers for the given field resource.
             responses:
                 204:
-                    headers:
+                   headers:
                         X-OADA-Fields-Metadata: *OADAFieldsMetadata
                 404:
         put:
@@ -755,7 +809,7 @@ traits:
             type: collection
             description: |
                 A per field key-value store that can be used to store any user
-                generated metadata
+                generated data
             get:
                 description: |
                     Returns the key-value store.
@@ -845,13 +899,13 @@ traits:
 
 /features:
 
-    /fileFormats:
+    /resourceFormats:
         type: informational
         description: |
-            Returns a list of supported file formats.
+            Returns a list of supported resource formats.
         get:
             description: |
-                Returns a paginated collection of all file formats that are
+                Returns a paginated collection of all resource formats that are
                 supported by the OADA implementation. The results can be limited
                 by an optional query parameter filter.
             is: [ paginated: {defaultLimit: 100}, filterable ]
@@ -859,19 +913,19 @@ traits:
                 200:
             body:
                 application/json:
-                    schema: !include schema/supported-file-formats.schema.json
+                    schema: !include schema/supported-resource-formats.schema.json
 
-        /{fileFormatId}:
+        /{resourceFormatId}:
 
             /transforms:
                 type: informational
                 description: |
-                    Returns a list of supported file format transformations that
-                    are supported by the OADA implementation. The results can be
-                    limited by an optional query parameter filter.
+                    Returns a list of supported resource format transformations
+                    that are supported by the OADA implementation. The results
+                    can be limited by an optional query parameter filter.
                 get:
                     description: |
-                        Returns a paginated collection of all file formats
+                        Returns a paginated collection of all resource formats
                         transformations that are supported by the OADA
                         implementation. The results can be limited by an
                         optional query parameter filter.
@@ -881,7 +935,7 @@ traits:
                             body:
                                 application/json:
                                     schema: !include |
-                                        schema/supported-file-formats.schema.json
+                                        schema/supported-resource-formats.schema.json
 
 /.well-known:
 
