@@ -733,7 +733,7 @@ traits:
             /{permissionId}:
                 type: member
 
-/configurations:
+/configs:
     type: collection
     description: |
         Explore and manage farm configuration data such as fields, machines,
@@ -764,6 +764,9 @@ traits:
 
     /{configurationKey}: &_configurationKey
         type: member
+        description: |
+            Custom key heirachy that resloves a resource that is the
+            configuration.
         get:
             description: |
                 Returns the field resource.
@@ -804,66 +807,6 @@ traits:
                 Deletes the specified field.
             responses:
                 404:
-
-        /properties:
-            type: collection
-            description: |
-                A per field key-value store that can be used to store any user
-                generated data
-            get:
-                description: |
-                    Returns the key-value store.
-                responses:
-                    404:
-            post:
-                description: |
-                    Adds a single or set of key-value pairs to the store.
-                body:
-                    application/json:
-                        schema: !!null
-                responses:
-                    400:
-                    404:
-                    415:
-
-            /{key}:
-                type: member
-                description: |
-                    Create, Update, and Delete the values of the given key.
-                uriParameters:
-                    key:
-                        type: string
-                        description: |
-                            Key in the given fields keystore.
-                get:
-                    description: |
-                        Returns the value of the given key.
-                    responses:
-                        200:
-                            body:
-                                application/json:
-                                    schema: !!null
-                        404:
-                put:
-                    description: |
-                        Updates or Creates the value under the given key. If
-                        the key already exists the original value will be lost.
-                    body:
-                        application/json:
-                            schema: !!null
-                    responses:
-                        400:
-                        404:
-                        415:
-                delete:
-                    description: |
-                        Deletes the given key and its value.
-                    responses:
-                        404:
-
-    # Example standard `configurationKey`s
-    /fields: *_configurationKey
-    /machines: *_configurationKey
 
 /users:
     type: collection
