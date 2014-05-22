@@ -41,12 +41,19 @@ securitySchemes:
                 OADA supports OAuth 2.0 for authenticating all API requests.
             type: OAuth 2.0
             describedBy:
+                queryParameters:
+                    access_token: &access_token
+                        type: string
+                        description: |
+                            OAuth 2.0 token. Perfer the Authorization header
+                        example: 0b79bab50daca910b000d4f1a2b675d604257e42
                 headers:
-                    Authorization:
+                    Authorization: &authorization
                         description: |
                             Used to send a valid OAuth 2 access token. Do not
                             use with the "access_token" query string parameter.
-                    oauth-scope:
+                        example: |
+                            Authorization: Bearer 0b79bab50daca910b000d4f1a2b675d604257e42
                 responses:
                     401: &resp401
                         description: |
@@ -62,7 +69,6 @@ securitySchemes:
                 authorizationUri: https://{rootUri}/oauth2/authorize
                 accessTokenUri: https://{rootUri}/oauth2/token
                 authorizationGrants: [ token ]
-securedBy: [ oauth_2_0 ]
 
 resourceTypes:
     -   _common:
@@ -72,6 +78,15 @@ resourceTypes:
             get?: &_common
                 description: |
                     **TODO**: Write Method Description
+                securedBy: [ oauth_2_0 ]
+                # Start Hack fix until secureBy works
+                queryParameters:
+                    access_token: *access_token
+                # End Hack fix until secureBy works
+                headers:
+                    # Start Hack fix until secureBy works
+                    Authorization: *authorization
+                    # End Hack fix until secureBy works
                 responses:
                     200?: &_resp200
                         description: |
@@ -79,6 +94,10 @@ resourceTypes:
                             returned with the response is dependent on the
                             method used in the request.
                         headers: &_commonHeaders
+                            # Start Hack fix until secureBy works
+                            401: *resp401
+                            403: *resp403
+                            # End Hack fix until secureBy works
                             X-Rate-Limit-Limit:
                                 type: integer
                                 required: true
