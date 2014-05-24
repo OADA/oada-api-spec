@@ -94,10 +94,6 @@ resourceTypes:
                             returned with the response is dependent on the
                             method used in the request.
                         headers: &_commonHeaders
-                            # Start Hack fix until secureBy works
-                            401: *resp401
-                            403: *resp403
-                            # End Hack fix until secureBy works
                             X-Rate-Limit-Limit:
                                 type: integer
                                 required: true
@@ -119,6 +115,10 @@ resourceTypes:
                                     The number of UTC epoch seconds until the
                                     next rate-limit window begins.
                                 example: "X-Rate-Limit-Reset: 124"
+                    # Start Hack fix until secureBy works
+                    401: *resp401
+                    403: *resp403
+                    # End Hack fix until secureBy works
                     404?: &_resp404
                         description: |
                             Not Found. The server has not found anything
