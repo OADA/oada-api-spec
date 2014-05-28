@@ -547,13 +547,130 @@ traits:
             responses:
                 404:
 
-        /blob:
-            type: datum
+        /data:
+            type: member
             description: |
-                 Binary contents of the resource.
+                The raw data of the resource. It may be any type of blob. 
+
+                However, if the blob is of a known format, for example, JSON or
+                XML, and has a standard method of mapping portions of the data
+                to a URI, such as, JSON Pointer and XML XPath, then you may
+                request just portions of the document using the {key} parameter.
             get:
                 description: |
-                    Returns the contents of the given resource's blob.
+                    Returns the raw resource data.
+                responses:
+                    200:
+                        headers:
+                            X-OADA-Resource-Properties: *OADAResourceProperties
+                    204:
+                        headers:
+                            X-OADA-Resource-Properties: *OADAResourceProperties
+                    404:
+
+            /{key}:
+                type: datum
+                description: |
+                    Create, Update, and Delete the values of the given key.
+
+                    If the file format stored in ../data has a URI mapping,
+                    e.g., JSON Pointer, XML XPath, etc, then {key} may be
+                    replaced with with any valid URI to access only the
+                    associated portion of the document.
+
+                    If the file format stored in ../data does not have a URI
+                    mapping, then {key} may not be used.
+                uriParameters:
+                    key:
+                        type: string
+                        description: |
+                            Key in the given resource data keystore.
+                get:
+                    description: |
+                        Returns the value of the given key.
+                    responses:
+                        200:
+                            headers:
+                                X-OADA-Resource-Properties: *OADAResourceProperties
+                        204:
+                            headers:
+                                X-OADA-Resource-Properties: *OADAResourceProperties
+                        400:
+                        404:
+                put:
+                    description: |
+                        Updates or Creates a value under the given key. If the
+                        key already exists, the original value will be lost.
+
+                        If the file format stored in ../data has a URI mapping,
+                        e.g., JSON Pointer, XML XPath, etc, then {key} may be
+                        replaced with with any valid URI to access only the
+                        associated portion of the document.
+
+                        If the file format stored in ../data does not have a URI
+                        mapping, then {key} may not be used.
+                    body:
+                        application/json:
+                            schema: !!null
+                    responses:
+                        200:
+                            headers:
+                                X-OADA-Resource-Properties: *OADAResourceProperties
+                        201:
+                            headers:
+                                X-OADA-Resource-Properties: *OADAResourceProperties
+                        400:
+                        404:
+                        415:
+                post:
+                    description: |
+                        Adds a single or set of key-value pairs to the store.
+
+                        If the file format stored in ../data has a URI mapping,
+                        e.g., JSON Pointer, XML XPath, etc, then {key} may be
+                        replaced with with any valid URI to access only the
+                        associated portion of the document.
+
+                        If the file format stored in ../data does not have a URI
+                        mapping, then {key} may not be used.
+                    body:
+                        application/json:
+                            schema: !!null
+                    responses:
+                        200:
+                            headers:
+                                X-OADA-Resource-Properties: *OADAResourceProperties
+                        201:
+                            headers:
+                                X-OADA-Resource-Properties: *OADAResourceProperties
+                        400:
+                        404:
+                        415:
+                delete:
+                    description: |
+                        Deletes the given key and its value.
+
+                        If the file format stored in ../data has a URI mapping,
+                        e.g., JSON Pointer, XML XPath, etc, then {key} may be
+                        replaced with with any valid URI to access only the
+                        associated portion of the document.
+
+                        If the file format stored in ../data does not have a URI
+                        mapping, then {key} may not be used.
+                    responses:
+                        200:
+                            headers:
+                                X-OADA-Resource-Properties: *OADAResourceProperties
+                        404:
+                        400:
+
+        /meta:
+            type: member
+            description: |
+                Document of metadata associated with the resource's data.
+            get:
+                description: |
+                    Returns the value of the given meta data key.
                 responses:
                     200:
                         headers:
@@ -564,7 +681,7 @@ traits:
                     404:
             head:
                 description: |
-                    Returns the headers for the given resource's blob.
+                    Returns the headers for the given resource's meta data.
                 responses:
                     200:
                         headers:
@@ -573,56 +690,8 @@ traits:
                         headers:
                             X-OADA-Resource-Properties: *OADAResourceProperties
                     404:
-            put:
-                description: |
-                    Creates or Updates a resource's blob.
-                headers:
-                  Content-Disposition:
-                responses:
-                    200:
-                        headers:
-                            X-OADA-Resource-Properties: *OADAResourceProperties
-                    201:
-                        headers:
-                            X-OADA-Resource-Properties: *OADAResourceProperties
-                    400:
-                    404:
-                queryParameters:
-                   directoryIds: *directoryIds
-                   name: *name
-                body:
-                    multipart/form-data: *formUpload
-                    application/x-www-form-urlencoded: *formUpload
-                    "*/*":
-            delete:
-                description: |
-                    Deletes the specified resources's blob.
-                responses:
-                    404:
-
-        /data:
-            type: collection
-            description: |
-                A per resource key-value store that can be used to store any
-                user generated data
-            get:
-                description: |
-                    Returns the key-value store.
-                responses:
-                    404:
-            post:
-                description: |
-                    Adds a single or set of key-value pairs to the store.
-                body:
-                    application/json:
-                        schema: !!null
-                responses:
-                    400:
-                    404:
-                    415:
-
             /{key}:
-                type: member
+                type: datum
                 description: |
                     Create, Update, and Delete the values of the given key.
                 uriParameters:
@@ -635,21 +704,49 @@ traits:
                         Returns the value of the given key.
                     responses:
                         200:
-                            body:
-                                application/json:
-                                    schema: !!null
+                            headers:
+                                X-OADA-Resource-Properties: *OADAResourceProperties
+                        204:
+                            headers:
+                                X-OADA-Resource-Properties: *OADAResourceProperties
                         404:
                 put:
-                    description: |
+                    description: 
                         Updates or Creates a value under the given key. If the
                         key already exists, the original value will be lost.
+                    headers:
+                        Content-Disposition:
+                    responses:
+                        200:
+                            headers:
+                                X-OADA-Resource-Properties: *OADAResourceProperties
+                        201:
+                            headers:
+                                X-OADA-Resource-Properties: *OADAResourceProperties
+                        400:
+                        404:
+                    queryParameters:
+                        directoryIds: *directoryIds
+                        name: *name
+                    body:
+                        multipart/form-data: *formUpload
+                        application/x-www-form-urlencoded: *formUpload
+                        "*/*":
+                post:
+                    description: |
+                        Adds a single or set of key-value pairs to the store.
                     body:
                         application/json:
                             schema: !!null
                     responses:
+                        200:
+                            headers:
+                                X-OADA-Resource-Properties: *OADAResourceProperties
+                        201:
+                            headers:
+                                X-OADA-Resource-Properties: *OADAResourceProperties
                         400:
                         404:
-                        415:
                 delete:
                     description: |
                         Deletes the given key and its value.
