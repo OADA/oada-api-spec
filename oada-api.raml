@@ -382,7 +382,6 @@ resourceTypes:
                 the implementation.
             type: _base
             get:
-                is: [ paginated: { defaultLimit: 100 }, filterable ]
 
 traits:
     -   paginated:
@@ -413,6 +412,13 @@ traits:
                         TODO: The exact format of search queries is still under
                         development.
                     example:
+                lastModified:
+                    type: string
+                    required: false
+                    description: |
+                        Find all elements that have been modified at or after
+                        the given date.    
+                    example: 1985-04-12T23:20:50.52Z
             responses:
                 400:
 
@@ -656,6 +662,7 @@ traits:
                 description: |
                     Returns a collection of resource formats that the given 
                     resource can be returned as.
+                is: [ paginated : {defaultLimit: 100}, filterable ] 
                 body:
                     application/json:
                         schema: !!null
@@ -826,6 +833,10 @@ traits:
                 Deletes the specified field.
             responses:
                 404:
+/about:
+    type: informational
+    description: |
+        A document that describes the current user and session.
 
 /users:
     type: collection
