@@ -1,0 +1,11 @@
+{
+    "href": "https://api.openag.io/authorizations/8ackam3",
+    "etag": "ckljae9ui3djac983cj90jdskljaur90a3u4eace",
+    "user": {
+        "href": "https://api.openag.io/users/fjf23cd"
+    },
+    "scope": "resources groups",
+    "created": "1985-04-12T23:20:50.52Z",
+    "modified": "1985-04-12T23:20:50.52Z",
+    "expires": "1985-05-12T23:20:50.52Z"
+}

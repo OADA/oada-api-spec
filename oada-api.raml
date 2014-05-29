@@ -32,9 +32,7 @@ documentation:
         content: !include LICENSE
 
 protocols: [ HTTPS ]
-schemas:
-    -   default-resource-data: !include |
-            schema/default-resource-data.schema.json
+#schemas:
 securitySchemes:
     -   oauth_2_0:
             description: |
@@ -148,6 +146,13 @@ resourceTypes:
                 all resources.
             type: _common
             get?:
+                queryParameters:
+                    _expand:
+                        type: boolean
+                        default: false
+                        description: |
+                            Expand all document href properties to their actual
+                            resource.
                 headers:
                     Accept:
                         type: string
@@ -427,7 +432,8 @@ traits:
                     type: boolean
                     default: false
                     description: |
-                        Expand any resource links to their actual resource.
+                        Expand all document href properties to their actual
+                        resource.
             responses:
                 400:
 
@@ -441,6 +447,19 @@ traits:
             currently authenticated user. The results can be limited by an
             optional query parameter filter.
         is: [ paginated: {defaultLimit: 100}, filterable ]
+        responses:
+            200:
+                headers:
+                    X-OADA-Resource-Properties: &OADAResourceProperties
+                        type: string
+                        description: |
+                            OADA resource properties that can not be directly
+                            modified by the user. For example resource creation
+                            time, modification time, format, create
+                            user, etc.
+                body: 
+                    application/json: 
+                        example: !include examples/resources/resources.get.json
     post:
         description: |
             Uploads a new resource and returns the resulting document. 
@@ -479,13 +498,7 @@ traits:
         responses:
             201:
                 headers:
-                    X-OADA-Resource-Properties: &OADAResourceProperties
-                        type: string
-                        description: |
-                            OADA resource properties that can not be directly
-                            modified by the user. For example resource creation
-                            time, modification time, format, create
-                            user, etc.
+                    X-OADA-Resource-Properties: *OADAResourceProperties
             415:
 
     /{resourceId}:
@@ -504,6 +517,9 @@ traits:
                 200:
                     headers:
                         X-OADA-Resource-Properties: *OADAResourceProperties
+                    body: 
+                        application/json: 
+                            example: !include examples/resources/resource.get.json
                 204:
                     headers:
                         X-OADA-Resource-Properties: *OADAResourceProperties
@@ -528,6 +544,9 @@ traits:
                 200:
                     headers:
                         X-OADA-Resource-Properties: *OADAResourceProperties
+                    body: 
+                        application/json: 
+                            example: !include examples/resources/resource.get.json
                 201:
                     headers:
                         X-OADA-Resource-Properties: *OADAResourceProperties
@@ -540,6 +559,18 @@ traits:
                 multipart/form-data: *formUpload
                 application/x-www-form-urlencoded: *formUpload
                 "*/*":
+        patch:
+            description: |
+                Patches a resource with given resource id.
+            headers:
+                Content-Disposition:
+            responses:
+                200:
+                    headers:
+                        X-OADA-Resource-Properties: *OADAResourceProperties
+                    body: 
+                        application/json: 
+                            example: !include examples/resources/resource.get.json
         delete:
             description: |
                 Deletes the specified resoruce and its associated data.
@@ -562,10 +593,39 @@ traits:
                     200:
                         headers:
                             X-OADA-Resource-Properties: *OADAResourceProperties
+                        body: 
+                            application/json: 
+                                example: !include examples/resources/resource-data.get.json
                     204:
                         headers:
                             X-OADA-Resource-Properties: *OADAResourceProperties
                     404:
+            put:
+                description: |
+                    Creates or Updates the raw resource data.
+                responses:
+                    200:
+                        headers:
+                            X-OADA-Resource-Properties: *OADAResourceProperties
+                        body: 
+                            application/json: 
+                                example: !include examples/resources/resource-data.get.json
+                    201:
+                        headers:
+                            X-OADA-Resource-Properties: *OADAResourceProperties
+                        body: 
+                            application/json: 
+                                example: !include examples/resources/resource-data.get.json
+            patch:
+                description: |
+                    Patches the raw resource data.
+                responses:
+                    200:
+                        headers:
+                            X-OADA-Resource-Properties: *OADAResourceProperties
+                        body: 
+                            application/json: 
+                                example: !include examples/resources/resource-data.get.json
 
             /{key}:
                 type: datum
@@ -621,6 +681,24 @@ traits:
                         400:
                         404:
                         415:
+                patch:
+                    description: |
+                        Patches a value under the given key.
+
+                        If the file format stored in ../data has a URI mapping,
+                        e.g., JSON Pointer, XML XPath, etc, then {key} may be
+                        replaced with with any valid URI to access only the
+                        associated portion of the document.
+
+                        If the file format stored in ../data does not have a URI
+                        mapping, then {key} may not be used.
+                    body:
+                        application/json:
+                            schema: !!null
+                    responses:
+                        200:
+                            headers:
+                                X-OADA-Resource-Properties: *OADAResourceProperties
                 post:
                     description: |
                         Adds a single or set of key-value pairs to the store.
@@ -674,10 +752,39 @@ traits:
                     200:
                         headers:
                             X-OADA-Resource-Properties: *OADAResourceProperties
+                        body: 
+                            application/json: 
+                                example: !include examples/resources/resource-meta.get.json
                     204:
                         headers:
                             X-OADA-Resource-Properties: *OADAResourceProperties
                     404:
+            put:
+                description: |
+                    Creates or Updates the value of the given meta data key.
+                responses:
+                    200:
+                        headers:
+                            X-OADA-Resource-Properties: *OADAResourceProperties
+                        body: 
+                            application/json: 
+                                example: !include examples/resources/resource-meta.get.json
+                    201:
+                        headers:
+                            X-OADA-Resource-Properties: *OADAResourceProperties
+                        body: 
+                            application/json: 
+                                example: !include examples/resources/resource-meta.get.json
+            patch:
+                description: |
+                    Patches the value of the given meta data key.
+                responses:
+                    200:
+                        headers:
+                            X-OADA-Resource-Properties: *OADAResourceProperties
+                        body: 
+                            application/json: 
+                                example: !include examples/resources/resource-meta.get.json
             head:
                 description: |
                     Returns the headers for the given resource's meta data.
@@ -689,6 +796,7 @@ traits:
                         headers:
                             X-OADA-Resource-Properties: *OADAResourceProperties
                     404:
+
             /{key}:
                 type: datum
                 description: |
@@ -763,15 +871,11 @@ traits:
                     application/json:
                         schema: !!null
                 responses:
+                    200:
+                        body: 
+                            application/json: 
+                                example: !include examples/resources/resource-formats.get.json
                     404:
-
-            /{format}:
-                type: informational
-                get:
-                    description: |
-                        Returns the referenced resource in the given format.
-                    responses:
-                        404:
 
         /parents:
             type: collection
@@ -785,6 +889,10 @@ traits:
                     by an optional query parameter filter.
                 is: [ paginated : {defaultLimit: 100}, filterable ]
                 responses:
+                    200:
+                        body: 
+                            application/json: 
+                                example: !include examples/resources/resource-parents.get.json
                     404:
             post:
                 description: |
@@ -793,6 +901,10 @@ traits:
                     application/json:
                         schema: !!null
                 responses:
+                    201:
+                        body: 
+                            application/json: 
+                                example: !include examples/resources/resource-parents-id.get.json
                     400:
                     404:
                     415:
@@ -805,6 +917,12 @@ traits:
                         description: |
                             The id of a folder resource containing this
                             resource.
+                get:
+                    responses:
+                        200:
+                            body: 
+                                application/json: 
+                                    example: !include examples/resources/resource-parents-id.get.json
 
         /children:
             type: collection
@@ -818,6 +936,10 @@ traits:
                     by an optional query parameter filter.
                 is: [ paginated : {defaultLimit: 100}, filterable ]
                 responses:
+                    200:
+                        body: 
+                            application/json: 
+                                example: !include examples/resources/resource-children.get.json
                     404:
             post:
                 description: |
@@ -827,12 +949,24 @@ traits:
                     application/json:
                         schema: !!null
                 responses:
+                    201:
+                        body: 
+                            application/json: 
+                                example: !include examples/resources/resource-children-id.get.json
                     400:
                     404:
                     415:
 
             /{childId}:
                 type: reference
+                get:
+                    description: |
+                        Returns a document describing the given child.
+                    responses:
+                        200:
+                            body: 
+                                application/json: 
+                                    example: !include examples/resources/resource-children-id.get.json
 
         /permissions:
             type: collection
@@ -851,9 +985,63 @@ traits:
                 - domain - all users of a particular identity provider
                 - anyone - publicly available
                 - group - user created grouping of other users (`/groups`)
+            get:
+                description: |
+                    Returns a paginated collection of all permissions associated
+                    with the given directory. The results can be limited
+                    by an optional query parameter filter.
+                is: [ paginated : {defaultLimit: 100}, filterable ]
+                responses:
+                    200:
+                        body: 
+                            application/json: 
+                                example: !include examples/resources/resource-permissions.get.json
+                    404:
+            post:
+                description: |
+                    Creates a permission for this resource.
+                responses:
+                    201:
+                        body:
+                            application/json:
+                                example: !include examples/resources/resource-permissions-id.get.json
 
             /{permissionId}:
                 type: member
+                get:
+                    description: |
+                        Returns the permission document associated with the 
+                        given permission id.
+                    responses:
+                        200:
+                            body: 
+                                application/json: 
+                                    example: !include examples/resources/resource-permissions-id.get.json
+                        404:
+                put:
+                    description: |
+                        Creates or Updates a permission document associated with
+                        the given permission id.
+                    responses:
+                        200:
+                            body: 
+                                application/json: 
+                                    example: !include examples/resources/resource-permissions-id.get.json
+                        201:
+                            body: 
+                                application/json: 
+                                    example: !include examples/resources/resource-permissions-id.get.json
+                        404:
+                patch:
+                    description: |
+                        Updates a permission document associated with
+                        the given permission id.
+                    responses:
+                        200:
+                            body: 
+                                application/json: 
+                                    example: !include examples/resources/resource-permissions-id.get.json
+                        404:
 
 /configs:
     type: collection
@@ -866,6 +1054,11 @@ traits:
             authenticated user. The results can be limited by an optional query
             parameter filter.
         is: [ paginated: {defaultLimit: 100}, filterable ]
+        responses:
+            200:
+                body: 
+                    application/json: 
+                        example: !include examples/configs/configs.get.json
     post:
         description: |
             Creates a new field.
@@ -874,13 +1067,9 @@ traits:
                 schema: !!null
         responses:
             201:
-                headers:
-                    X-OADA-Fields-Metadata: &OADAFieldsMetadata
-                        type: string
-                        description: |
-                            OADA field data that can not be directly
-                            modified by the user. For example directory creation
-                            time, directory modification time, create user, etc.
+                body: 
+                    application/json: 
+                        example: !include examples/configs/configs.get.json
             400:
             415:
 
@@ -894,19 +1083,15 @@ traits:
                 Returns the field resource.
             responses:
                 200:
-                    headers:
-                        X-OADA-Fields-Metadata: *OADAFieldsMetadata
                     body:
-                        application/json:
-                            schema: !!null
+                        application/json: 
+                            example: !include examples/configs/configs-id.get.json
                 404:
         head:
             description:
                 Returns the headers for the given field resource.
             responses:
                 204:
-                   headers:
-                        X-OADA-Fields-Metadata: *OADAFieldsMetadata
                 404:
         put:
             description: |
@@ -916,11 +1101,27 @@ traits:
                     schema: !!null
             responses:
                 200:
-                    headers:
-                        X-OADA-Fields-Metadata: *OADAFieldsMetadata
+                    body:
+                        application/json: 
+                            example: !include examples/configs/configs-id.get.json
                 201:
-                    headers:
-                        X-OADA-Fields-Metadata: *OADAFieldsMetadata
+                    body:
+                        application/json: 
+                            example: !include examples/configs/configs-id.get.json
+                400:
+                404:
+                415:
+        patch:
+            description: |
+                Updates the field with the given id.
+            body:
+                application/json:
+                    schema: !!null
+            responses:
+                200:
+                    body:
+                        application/json: 
+                            example: !include examples/configs/configs-id.get.json
                 400:
                 404:
                 415:
@@ -933,38 +1134,146 @@ traits:
     type: informational
     description: |
         A document that describes the current user and session.
+    get:
+        responses:
+            200:
+                body:
+                    application/json:
+                        example: !include examples/about/about.get.json
 
 /users:
     type: collection
     description: |
         The list of all users known to the current user.
+    get:
+        responses:
+            200:
+                body:
+                    application/json:
+                        example: !include examples/users/users.get.json
+    post:
+        responses:
+            201:
+                body:
+                    application/json:
+                        example: !include examples/users/users.get.json
 
     /{userId}:
         type: member
         description: |
             A document describing various information about a given user.
+        get:
+            responses:
+                200:
+                    body:
+                        application/json:
+                            example: !include examples/users/users-id.get.json
+        put:
+            responses:
+                200:
+                    body:
+                        application/json:
+                            example: !include examples/users/users-id.get.json
+                201:
+                    body:
+                        application/json:
+                            example: !include examples/users/users-id.get.json
+        patch:
+            responses:
+                200:
+                    body:
+                        application/json:
+                            example: !include examples/users/users-id.get.json
 
 /groups:
     type: collection
     description: |
         The list of all groups defined by the current user.
+    get:
+        responses:
+            200:
+                body:
+                    application/json:
+                        example: !include examples/groups/groups.get.json
+    post:
+        responses:
+            201:
+                body:
+                    application/json:
+                        example: !include examples/groups/groups.get.json
 
     /{groupId}:
         type: member
         description: |
             A document listing the user in a given group.
+        get:
+            responses:
+                200:
+                    body:
+                        application/json:
+                            example: !include examples/groups/groups-id.get.json
+        put:
+            responses:
+                200:
+                    body:
+                        application/json:
+                            example: !include examples/groups/groups-id.get.json
+                201:
+                    body:
+                        application/json:
+                            example: !include examples/groups/groups-id.get.json
+        patch:
+            responses:
+                200:
+                    body:
+                        application/json:
+                            example: !include examples/groups/groups-id.get.json
 
 /authorizations:
     type: collection
     description: |
         The list of all active authorizations, e.g., tokens, for the current 
         user.
+    get:
+        responses:
+            200:
+                body:
+                    application/json:
+                        example: !include examples/authorizations/authorizations.get.json
+    post:
+        responses:
+            201:
+                body:
+                    application/json:
+                        example: !include examples/authorizations/authorizations.get.json
 
     /{authorizationId}:
         type: member
         description: |
             A document describing the details of a particular authorization.
             For example: assignee, scope, expiration time, etc.
+        get:
+            responses:
+                200:
+                    body:
+                        application/json:
+                            example: !include examples/authorizations/authorizations-id.get.json
+        put:
+            responses:
+                200:
+                    body:
+                        application/json:
+                            example: !include examples/authorizations/authorizations-id.get.json
+                201:
+                    body:
+                        application/json:
+                            example: !include examples/authorizations/authorizations-id.get.json
+        patch:
+            responses:
+                200:
+                    body:
+                        application/json:
+                            example: !include examples/authorizations/authorizations-id.get.json
 
 /.well-known:
 
@@ -976,10 +1285,22 @@ traits:
 
             See [RFC5785][RFC].
             [RFC]: http://www.ietf.org/rfc/rfc5785.txt "RFC5785"
+        get:
+            responses:
+                200:
+                    body:
+                        application/json:
+                            example: !include examples/well-known/oada-configuration.get.json
 
     /openid-configuration:
         type: informational
         description: |
             Defined in [OpenID Connect Discovery 1.0][openid].
             [openid]: http://openid.net/specs/openid-connect-discovery-1_0.html#WellKnownContents "OpenID Connect Discovery 1.0"
+        get:
+            responses:
+                200:
+                    body:
+                        application/json:
+                            example: !include examples/well-known/openid-configuration.get.json
 

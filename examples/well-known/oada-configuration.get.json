@@ -1,0 +1,5 @@
+{
+    "authorizationEndpoint": "http://id.openag.io/connect/authorize",
+    "tokenEndpoint": "http://api.openag.io/connect/token",
+    "OADABaseUri": "https://api.openag.io"
+}
