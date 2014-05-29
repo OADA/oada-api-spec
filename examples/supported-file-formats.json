@@ -1,8 +1,0 @@
-[
-    {"short_name":"csv", "long_name":"Comma Separated Values"},
-    {"short_name":"jd-gs-2", "long_name":"John Deere GreenStar 2"},
-    {"short_name":"jd-gs-3", "long_name":"John Deere GreenStar 3"},
-    {"short_name":"pp-2020-ss", "long_name":"Precision Planting 20/20 SeedSense"},
-    {"short_name":"shp", "long_name":"Shape"},
-    {"short_name":"tsv", "long_name":"Tab Separated Values"}
-]

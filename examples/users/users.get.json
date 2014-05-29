@@ -1,0 +1,11 @@
+{
+    "href": "https://api.openag.io/users",
+    "etag": "9dafjk3jfjaakjce3jkcha8d7c3hcausc6783a7c",
+    "items": [{
+        "href": "https://api.openag.io/resources/kdufe3f"
+    },
+    { 
+        "href": "https://api.openag.io/resources/idnmz83"
+    }]
+}
+
