@@ -1,0 +1,568 @@
+-   _headersType:
+        usage: |
+            Declare all used headers and responses so they are in one place.
+        get?: &_methodHeaders
+            description: |
+                **TODO**: Write method description
+            headers: &_headers
+                Content-Encoding?:
+                Content-Disposition?:
+                    type: string
+                    required: false
+                    description: |
+                        Can be used to specify, among other things, the
+                        desired name of the resource to be created by this
+                        request.  The headers usage in HTTP is defined in
+                        [RFC6266][RFC].
+                        [RFC]: http://www.ietf.org/rfc/rfc6266.txt "RFC6266"
+                    example: |
+                        Content-Disposition:
+                        attachment; filename="field.shp"
+                Content-Length?:
+                    required: true
+                    type: integer
+                    description: |
+                        A Content-Length header is required to verify that
+                        the entire transmission was received.
+                Content-MD5?:
+                    required: false
+                    type: string
+                    description: |
+                        The optional Content-MD5 header is used to verify
+                        the received resource is error free. The header is
+                        defined in [RFC1864][RFC].
+                        [RFC]: http://www.ietf.org/rfc/rfc1864.txt "RFC1864"
+                Content-Range?:
+                Content-Type?:
+                    type: string
+                    required: true
+                    description: |
+                        An indicator of the media type of the
+                        response body.
+                    example: 'Content-Type: application/json'
+
+                Accept?:
+                    type: string
+                    required: true
+                    description: |
+                        Used to specify certain media types which are
+                        acceptable in the response.
+                    example: 'Accept: application/json, application/xml'
+                Accept-Encoding?:
+                Accept-Ranges?:
+                If-Match?:
+                    type: string
+                    required: false
+                    description: |
+                        Cached value received from the server in an `ETag`
+                        header the last time a `GET` on this resource
+                        succeeded.  The server will use this to determine
+                        if the resource has changed and decide whether to
+                        respond with `412`.
+                    example: 'If-Match: "686897696a7c876b7e"'
+                If-Modified-since?:
+                If-None-Match?:
+                    type: string
+                    required: false
+                    description: |
+                        Cached value received from the server in an `ETag`
+                        header the last time a `GET` on this succeeded.
+                        The server will use this to determine if the
+                        resource has changed and decide whether to respond
+                        with `304`.
+                    example: 'If-None-Match: "686897696a7c876b7e"'
+                If-Range?:
+                If-Unmodified-since?:
+                Range?:
+
+                Accept-Patch?:
+                    type: string
+                    required: true
+                    description: |
+                        Patch formats accepted, as defined in
+                        [RFC5789][RFC].
+                        [RFC]: http://www.ietf.org/rfc/rfc5789.txt "RFC5789"
+                Allow?:
+                    type: string
+                    required: true
+                Date?:
+                ETag?:
+                    type: string
+                    required: true
+                    description: |
+                        An opaque identifier assigned by
+                        the server to the specific version of the
+                        resource contained in this response.  The
+                        client can cache it for inclusion in a
+                        future conditional `GET` on this resource.
+                    example: 'ETag: "686897696a7c876b7e"'
+                Expires:
+                Last-Modified?:
+                Location?:
+                    type: string
+                    required: true
+                X-Rate-Limit-Limit?:
+                    type: integer
+                    required: true
+                    description: |
+                        The maximum number of requests allowed per
+                        rate-limit window.
+                    example: "X-Rate-Limit-Limit: 100"
+                X-Rate-Limit-Remaining?:
+                    type: integer
+                    required: true
+                    description: |
+                        The number of remaining requests allowed in
+                        the current rate-limit window.
+                    example: "X-Rate-Limit-Remaining: 89"
+                X-Rate-Limit-Reset?:
+                    type: integer
+                    required: true
+                    description: |
+                        The number of UTC epoch seconds until the
+                        next rate-limit window begins.
+                    example: "X-Rate-Limit-Reset: 124"
+            responses:
+                200?:
+                    headers: *_headers
+                    description: OK
+                201?:
+                    headers: *_headers
+                    description: Created
+                204?:
+                    headers: *_headers
+                    description: No Content
+                206?:
+                    headers: *_headers
+                    description: Partial Content
+                301?:
+                    headers: *_headers
+                    description: Moved Permanently
+                304?:
+                    headers: *_headers
+                    description: Not Modified
+                307?:
+                    headers: *_headers
+                    description: Temporary Redirect
+                400?:
+                    headers: *_headers
+                    description: Bad Request
+                401?:
+                    headers: *_headers
+                    description: Unauthorized
+                403?:
+                    headers: *_headers
+                    description: Forbidden
+                404?:
+                    headers: *_headers
+                    description: Not Found
+                406?:
+                    headers: *_headers
+                    description: Not Acceptable
+                409?:
+                    headers: *_headers
+                    description: Conflict
+                411?:
+                    headers: *_headers
+                    description: Length Required
+                412?:
+                    headers: *_headers
+                    description: Precondition Failed
+                415?:
+                    headers: *_headers
+                    description: Unsupported Media Type
+                416?:
+                    headers: *_headers
+                    description: Requested Range Not Satisfiable
+                429?:
+                    headers: *_headers
+                    description: Too Many Requests
+                500?:
+                    headers: *_headers
+                    description: Internal Server Error
+        head?: *_methodHeaders
+        options?: *_methodHeaders
+        put?: *_methodHeaders
+        post?: *_methodHeaders
+        delete?: *_methodHeaders
+        patch?: *_methodHeaders
+
+-   _responsesType:
+        usage: |
+            Assign "all the time" headers to things
+        type: _headersType
+        get?: &_responses
+            # Start Hack fix until secureBy works
+            queryParameters:
+                access_token:
+                    type: string
+                    description: |
+                        OAuth 2.0 token. Perfer the Authorization header
+                    example: 0b79bab50daca910b000d4f1a2b675d604257e42
+            # End Hack fix until secureBy works
+            headers:
+                # Start Hack fix until secureBy works
+                Authorization:
+                    description: |
+                        Used to send a valid OAuth 2 access token. Do not
+                        use with the "access_token" query string parameter.
+                    example: |
+                        Authorization: Bearer 0b79bab50daca910b000d4f1a2b675d604257e42
+                # End Hack fix until secureBy works
+            responses:
+                200?:
+                    headers:
+                        Date:
+                        ETag:
+                        Expires:
+                        Last-Modified:
+
+                        X-Rate-Limit-Limit:
+                        X-Rate-Limit-Remaining:
+                        X-Rate-Limit-Reset:
+                201?:
+                    headers:
+                        Content-Encoding:
+                        COntent-Disposition:
+                        Content-Length:
+                        Content-MD5:
+                        Content-Type:
+                        
+                        Date:
+                        ETag:
+                        Expires:
+                        Last-Modified:
+                        Location:
+                        
+                        X-Rate-Limit-Limit:
+                        X-Rate-Limit-Remaining:
+                        X-Rate-Limit-Reset:
+                204?:
+                    headers:
+                        Date:
+                        
+                        X-Rate-Limit-Limit:
+                        X-Rate-Limit-Remaining:
+                        X-Rate-Limit-Reset:
+                206?:
+                    headers:
+                        Content-Encoding:
+                        Content-Disposition:
+                        Content-MD5:
+                        Content-Range:
+                        Content-Type:
+
+                        Date:
+                        ETag:
+                        Expires:
+                        Last-Modified:
+
+                        X-Rate-Limit-Limit:
+                        X-Rate-Limit-Remaining:
+                        X-Rate-Limit-Reset:
+                301?:
+                    headers:
+                        Location:
+
+                        X-Rate-Limit-Limit:
+                        X-Rate-Limit-Remaining:
+                        X-Rate-Limit-Reset:
+                304?:
+                    headers:
+                        Date:
+                        ETag:
+                        Expires:
+
+                        X-Rate-Limit-Limit:
+                        X-Rate-Limit-Remaining:
+                        X-Rate-Limit-Reset:
+                307?:
+                    headers:
+                        Location:
+
+                        X-Rate-Limit-Limit:
+                        X-Rate-Limit-Remaining:
+                        X-Rate-Limit-Reset:
+                400?:
+                    headers:
+                        X-Rate-Limit-Limit:
+                        X-Rate-Limit-Remaining:
+                        X-Rate-Limit-Reset:
+                401?:
+                    headers:
+                        WWW-Authenticate:
+
+                        X-Rate-Limit-Limit:
+                        X-Rate-Limit-Remaining:
+                        X-Rate-Limit-Reset:
+                403?:
+                    headers:
+                        X-Rate-Limit-Limit:
+                        X-Rate-Limit-Remaining:
+                        X-Rate-Limit-Reset:
+                404?:
+                    headers:
+                        X-Rate-Limit-Limit:
+                        X-Rate-Limit-Remaining:
+                        X-Rate-Limit-Reset:
+                406?:
+                    headers:
+                        Content-Encoding:
+                        Content-Length:
+                        Content-MD5:
+                        Content-Type:
+
+                        X-Rate-Limit-Limit:
+                        X-Rate-Limit-Remaining:
+                        X-Rate-Limit-Reset:
+                409?:
+                    headers:
+                        Content-Encoding:
+                        Content-Length:
+                        Content-MD5:
+                        Content-Range:
+                        Content-Type:
+                        
+                        Date:
+                        ETag:
+                        Expires:
+                        Last-Modified:
+                        
+                        X-Rate-Limit-Limit:
+                        X-Rate-Limit-Remaining:
+                        X-Rate-Limit-Reset:
+                411?:
+                    headers:
+                        X-Rate-Limit-Limit:
+                        X-Rate-Limit-Remaining:
+                        X-Rate-Limit-Reset:
+                412?:
+                    headers:
+                        X-Rate-Limit-Limit:
+                        X-Rate-Limit-Remaining:
+                        X-Rate-Limit-Reset:
+                415?:
+                    headers:
+                        X-Rate-Limit-Limit:
+                        X-Rate-Limit-Remaining:
+                        X-Rate-Limit-Reset:
+                416?:
+                    headers:
+                        Content-Range:
+
+                        X-Rate-Limit-Limit:
+                        X-Rate-Limit-Remaining:
+                        X-Rate-Limit-Reset:
+                429?:
+                    headers:
+                        X-Rate-Limit-Limit:
+                        X-Rate-Limit-Remaining:
+                        X-Rate-Limit-Reset:
+                500?:
+                    headers:
+                        X-Rate-Limit-Limit:
+                        X-Rate-Limit-Remaining:
+                        X-Rate-Limit-Reset:
+        head?: *_responses
+        options?: *_responses
+        put?: *_responses
+        post?: *_responses
+        delete?: *_responses
+        patch?: *_responses
+-   _methodsType:
+        usage: |
+            Assign headers and responses to each method
+        type: _responsesType
+        get?:
+            headers:
+                If-None-Match:
+            responses:
+                200:
+                    headers:
+                        Content-Encoding:
+                        Content-Disposition:
+                        Content-Length:
+                        Content-MD5:
+                        Content-Type:
+                206:
+                301:
+                304:
+                307:
+                401:
+                403:
+                416:
+                429:
+        head?:
+            responses:
+                200:
+                    headers:
+                        Content-Encoding:
+                        Content-Disposition:
+                        Content-Length:
+                        Content-MD5:
+                        Content-Type:
+                301:
+                307:
+                401:
+                403:
+                429:
+        options?:
+            responses:
+                200:
+                    headers:
+                        Allow:
+                301:
+                307:
+                401:
+                403:
+                429:
+        put?:
+            headers:
+                Content-Type:
+                Content-Length:
+                Content-MD5:
+                Content-Disposition:
+                If-Match:
+            responses:
+                200:
+                201:
+                301:
+                307:
+                401:
+                403:
+                409:
+                411:
+                412:
+                415:
+                416:
+                429:
+        post?:
+            headers:
+                Content-Length:
+                Content-MD5:
+                Content-Type:
+            responses:
+                200:
+                201:
+                301:
+                307:
+                401:
+                403:
+                411:
+                412:
+                415:
+                429:
+        delete?:
+            responses:
+                204:
+                301:
+                307:
+                401:
+                403:
+                429:
+        patch?:
+            headers:
+                Content-Length:
+                Content-MD5:
+                Content-Type:
+                If-Match:
+            responses:
+                200:
+                301:
+                307:
+                401:
+                403:
+                406:
+                411:
+                412:
+                415:
+                429:
+
+-   _patchable:
+        type: _methodsType
+        usage: |
+            This should NOT be used for any actual resource. Adds patch
+            support to the `_methodsType` type.
+        patch:
+        get: &_patchable
+            responses:
+                200:
+                    headers:
+                        Accept-Patch:
+                            type: string
+                            required: true
+                            description: |
+                                Patch formats accepted, as defined in
+                                [RFC5789][RFC].
+                                [RFC]: http://www.ietf.org/rfc/rfc5789.txt "RFC5789"
+        options: *_patchable
+
+-   collection:
+        usage: |
+            The base type for any collection style resource. For example,
+            `/resources`.
+        description: |
+            Collection of <<resourcePathName>> available to the user
+        type: _methodsType
+        get:
+            description: |
+                Get a list of <<resourcePathName>>
+            is: [ paginated: { defaultLimit: 100 }, filterable, expandable ]
+        options:
+        post:
+            description: |
+                Add a new <<resourcePathName|!singularize>>
+
+-   instance:
+        usage: |
+            The base type for any instance style resource.  For example,
+            `/resources/{resourceId}/properties/{key}`.
+        description: |
+            An individual <<resourcePathName|!singularize>>
+        type: _patchable
+        get:
+            description: |
+                Get the <<resourcePathName|!singularize>>
+                with <<resourcePathName|!singularize>>Id =
+                {<<resourcePathName|!singularize>>Id}
+        head:
+        options:
+        put:
+            description: |
+                Update the <<resourcePathName|!singularize>>
+                with <<resourcePathName|!singularize>>Id =
+                {<<resourcePathName|!singularize>>Id}
+        delete:
+            description: |
+                Delete the <<resourcePathName|!singularize>>
+                with <<resourcePathName|!singularize>>Id =
+                {<<resourcePathName|!singularize>>Id}
+
+-   datum:
+        usage: |
+            The base type for any data type resource. For example,
+            `/resources/{id}`.
+        type: _patchable
+        get:
+        options:
+        put:
+        delete:
+
+-   reference:
+        usage: |
+            The base type for resources which reference an actual resource
+            located elsewhere.
+        type: _methodsType
+        get:
+            is: [ expandable ]
+        options:
+        delete:
+
+-   informational:
+        usage: |
+            The base type for any informational style resource. For
+            example, how `/about` describes the current user.
+        type: _methodsType
+        get:
+        options:
+
