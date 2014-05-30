@@ -43,7 +43,7 @@ securitySchemes:
                     access_token: &access_token
                         type: string
                         description: |
-                            OAuth 2.0 token. Perfer the Authorization header
+                            OAuth 2.0 token. Prefer the Authorization header
                         example: 0b79bab50daca910b000d4f1a2b675d604257e42
                 headers:
                     Authorization: &authorization
@@ -132,14 +132,6 @@ traits:
         is: [ paginated: {defaultLimit: 100}, filterable ]
         responses:
             200:
-                headers:
-                    X-OADA-Resource-Properties: &OADAResourceProperties
-                        type: string
-                        description: |
-                            OADA resource properties that can not be directly
-                            modified by the user. For example resource creation
-                            time, modification time, format, create
-                            user, etc.
                 body: 
                     application/json: 
                         example: !include examples/resources/resources.get.json
@@ -178,11 +170,6 @@ traits:
                             The data blob to be uploaded.
             application/x-www-form-urlencoded: *formUpload
             "*/*":
-        responses:
-            201:
-                headers:
-                    X-OADA-Resource-Properties: *OADAResourceProperties
-            415:
 
     /{resourceId}:
         type: instance
@@ -198,26 +185,12 @@ traits:
                 Returns the contents of the given resource.
             responses:
                 200:
-                    headers:
-                        X-OADA-Resource-Properties: *OADAResourceProperties
                     body: 
                         application/json: 
                             example: !include examples/resources/resource.get.json
-                204:
-                    headers:
-                        X-OADA-Resource-Properties: *OADAResourceProperties
-                404:
         head:
             description: |
                 Returns the headers for the given resource.
-            responses:
-                200:
-                    headers:
-                        X-OADA-Resource-Properties: *OADAResourceProperties
-                204:
-                    headers:
-                        X-OADA-Resource-Properties: *OADAResourceProperties
-                404:
         put:
             description: |
                 Creates or Updates a resource with given resource id.
@@ -225,16 +198,9 @@ traits:
               Content-Disposition:
             responses:
                 200:
-                    headers:
-                        X-OADA-Resource-Properties: *OADAResourceProperties
                     body: 
                         application/json: 
                             example: !include examples/resources/resource.get.json
-                201:
-                    headers:
-                        X-OADA-Resource-Properties: *OADAResourceProperties
-                400:
-                404:
             queryParameters:
                directoryIds: *directoryIds
                name: *name
@@ -249,14 +215,12 @@ traits:
                 Content-Disposition:
             responses:
                 200:
-                    headers:
-                        X-OADA-Resource-Properties: *OADAResourceProperties
                     body: 
                         application/json: 
                             example: !include examples/resources/resource.get.json
         delete:
             description: |
-                Deletes the specified resoruce and its associated data.
+                Deletes the specified resource and its associated data.
             responses:
                 404:
 
@@ -274,28 +238,18 @@ traits:
                     Returns the raw resource data.
                 responses:
                     200:
-                        headers:
-                            X-OADA-Resource-Properties: *OADAResourceProperties
                         body: 
                             application/json: 
                                 example: !include examples/resources/resource-data.get.json
-                    204:
-                        headers:
-                            X-OADA-Resource-Properties: *OADAResourceProperties
-                    404:
             put:
                 description: |
                     Creates or Updates the raw resource data.
                 responses:
                     200:
-                        headers:
-                            X-OADA-Resource-Properties: *OADAResourceProperties
                         body: 
                             application/json: 
                                 example: !include examples/resources/resource-data.get.json
                     201:
-                        headers:
-                            X-OADA-Resource-Properties: *OADAResourceProperties
                         body: 
                             application/json: 
                                 example: !include examples/resources/resource-data.get.json
@@ -304,8 +258,6 @@ traits:
                     Patches the raw resource data.
                 responses:
                     200:
-                        headers:
-                            X-OADA-Resource-Properties: *OADAResourceProperties
                         body: 
                             application/json: 
                                 example: !include examples/resources/resource-data.get.json
@@ -316,7 +268,7 @@ traits:
                     Create, Update, and Delete the values of the given key.
 
                     If the file format stored in ../data has a URI mapping,
-                    e.g., JSON Pointer, XML XPath, etc, then {key} may be
+                    e.g., JSON Pointer, XML XPath, etc., then {key} may be
                     replaced with with any valid URI to access only the
                     associated portion of the document.
 
@@ -330,22 +282,13 @@ traits:
                 get:
                     description: |
                         Returns the value of the given key.
-                    responses:
-                        200:
-                            headers:
-                                X-OADA-Resource-Properties: *OADAResourceProperties
-                        204:
-                            headers:
-                                X-OADA-Resource-Properties: *OADAResourceProperties
-                        400:
-                        404:
                 put:
                     description: |
                         Updates or Creates a value under the given key. If the
                         key already exists, the original value will be lost.
 
                         If the file format stored in ../data has a URI mapping,
-                        e.g., JSON Pointer, XML XPath, etc, then {key} may be
+                        e.g., JSON Pointer, XML XPath, etc., then {key} may be
                         replaced with with any valid URI to access only the
                         associated portion of the document.
 
@@ -354,22 +297,12 @@ traits:
                     body:
                         application/json:
                             schema: !!null
-                    responses:
-                        200:
-                            headers:
-                                X-OADA-Resource-Properties: *OADAResourceProperties
-                        201:
-                            headers:
-                                X-OADA-Resource-Properties: *OADAResourceProperties
-                        400:
-                        404:
-                        415:
                 patch:
                     description: |
                         Patches a value under the given key.
 
                         If the file format stored in ../data has a URI mapping,
-                        e.g., JSON Pointer, XML XPath, etc, then {key} may be
+                        e.g., JSON Pointer, XML XPath, etc., then {key} may be
                         replaced with with any valid URI to access only the
                         associated portion of the document.
 
@@ -378,16 +311,12 @@ traits:
                     body:
                         application/json:
                             schema: !!null
-                    responses:
-                        200:
-                            headers:
-                                X-OADA-Resource-Properties: *OADAResourceProperties
                 post:
                     description: |
                         Adds a single or set of key-value pairs to the store.
 
                         If the file format stored in ../data has a URI mapping,
-                        e.g., JSON Pointer, XML XPath, etc, then {key} may be
+                        e.g., JSON Pointer, XML XPath, etc., then {key} may be
                         replaced with with any valid URI to access only the
                         associated portion of the document.
 
@@ -396,33 +325,17 @@ traits:
                     body:
                         application/json:
                             schema: !!null
-                    responses:
-                        200:
-                            headers:
-                                X-OADA-Resource-Properties: *OADAResourceProperties
-                        201:
-                            headers:
-                                X-OADA-Resource-Properties: *OADAResourceProperties
-                        400:
-                        404:
-                        415:
                 delete:
                     description: |
                         Deletes the given key and its value.
 
                         If the file format stored in ../data has a URI mapping,
-                        e.g., JSON Pointer, XML XPath, etc, then {key} may be
+                        e.g., JSON Pointer, XML XPath, etc., then {key} may be
                         replaced with with any valid URI to access only the
                         associated portion of the document.
 
                         If the file format stored in ../data does not have a URI
                         mapping, then {key} may not be used.
-                    responses:
-                        200:
-                            headers:
-                                X-OADA-Resource-Properties: *OADAResourceProperties
-                        404:
-                        400:
 
         /meta:
             type: datum
@@ -433,28 +346,19 @@ traits:
                     Returns the value of the given meta data key.
                 responses:
                     200:
-                        headers:
-                            X-OADA-Resource-Properties: *OADAResourceProperties
                         body: 
                             application/json: 
                                 example: !include examples/resources/resource-meta.get.json
-                    204:
-                        headers:
-                            X-OADA-Resource-Properties: *OADAResourceProperties
                     404:
             put:
                 description: |
                     Creates or Updates the value of the given meta data key.
                 responses:
                     200:
-                        headers:
-                            X-OADA-Resource-Properties: *OADAResourceProperties
                         body: 
                             application/json: 
                                 example: !include examples/resources/resource-meta.get.json
                     201:
-                        headers:
-                            X-OADA-Resource-Properties: *OADAResourceProperties
                         body: 
                             application/json: 
                                 example: !include examples/resources/resource-meta.get.json
@@ -463,8 +367,6 @@ traits:
                     Patches the value of the given meta data key.
                 responses:
                     200:
-                        headers:
-                            X-OADA-Resource-Properties: *OADAResourceProperties
                         body: 
                             application/json: 
                                 example: !include examples/resources/resource-meta.get.json
@@ -472,12 +374,6 @@ traits:
                 description: |
                     Returns the headers for the given resource's meta data.
                 responses:
-                    200:
-                        headers:
-                            X-OADA-Resource-Properties: *OADAResourceProperties
-                    204:
-                        headers:
-                            X-OADA-Resource-Properties: *OADAResourceProperties
                     404:
 
             /{key}:
@@ -492,29 +388,10 @@ traits:
                 get:
                     description: |
                         Returns the value of the given key.
-                    responses:
-                        200:
-                            headers:
-                                X-OADA-Resource-Properties: *OADAResourceProperties
-                        204:
-                            headers:
-                                X-OADA-Resource-Properties: *OADAResourceProperties
-                        404:
                 put:
                     description: 
                         Updates or Creates a value under the given key. If the
                         key already exists, the original value will be lost.
-                    headers:
-                        Content-Disposition:
-                    responses:
-                        200:
-                            headers:
-                                X-OADA-Resource-Properties: *OADAResourceProperties
-                        201:
-                            headers:
-                                X-OADA-Resource-Properties: *OADAResourceProperties
-                        400:
-                        404:
                     queryParameters:
                         directoryIds: *directoryIds
                         name: *name
@@ -528,20 +405,9 @@ traits:
                     body:
                         application/json:
                             schema: !!null
-                    responses:
-                        200:
-                            headers:
-                                X-OADA-Resource-Properties: *OADAResourceProperties
-                        201:
-                            headers:
-                                X-OADA-Resource-Properties: *OADAResourceProperties
-                        400:
-                        404:
                 delete:
                     description: |
                         Deletes the given key and its value.
-                    responses:
-                        404:
 
         /formats:
             type: informational
@@ -558,7 +424,6 @@ traits:
                         body: 
                             application/json: 
                                 example: !include examples/resources/resource-formats.get.json
-                    404:
 
         /parents:
             type: collection
@@ -576,7 +441,6 @@ traits:
                         body: 
                             application/json: 
                                 example: !include examples/resources/resource-parents.get.json
-                    404:
             post:
                 description: |
                     Adds a parent directory to the given directory.
@@ -588,9 +452,6 @@ traits:
                         body: 
                             application/json: 
                                 example: !include examples/resources/resource-parents-id.get.json
-                    400:
-                    404:
-                    415:
 
             /{parentId}:
                 type: reference
@@ -623,11 +484,9 @@ traits:
                         body: 
                             application/json: 
                                 example: !include examples/resources/resource-children.get.json
-                    404:
             post:
                 description: |
                     Adds a child directory to the given directory.
-                    Returns `400` if adding a child to a resource with a blob.
                 body:
                     application/json:
                         schema: !!null
@@ -636,9 +495,6 @@ traits:
                         body: 
                             application/json: 
                                 example: !include examples/resources/resource-children-id.get.json
-                    400:
-                    404:
-                    415:
 
             /{childId}:
                 type: reference
@@ -679,7 +535,6 @@ traits:
                         body: 
                             application/json: 
                                 example: !include examples/resources/resource-permissions.get.json
-                    404:
             post:
                 description: |
                     Creates a permission for this resource.
@@ -726,16 +581,16 @@ traits:
                                     example: !include examples/resources/resource-permissions-id.get.json
                         404:
 
-/configs:
+/configurations:
     type: collection
     description: |
         Explore and manage farm configuration data such as fields, machines,
         etc. Eventually this data will help directly query resources. 
     get:
         description: |
-            Returns a paginated collection of all fields owned by the currently
-            authenticated user. The results can be limited by an optional query
-            parameter filter.
+            Returns a paginated collection of all configurations for the
+            currently authenticated user. The results can be limited by an
+            optional query parameter filter.
         is: [ paginated: {defaultLimit: 100}, filterable ]
         responses:
             200:
@@ -744,7 +599,7 @@ traits:
                         example: !include examples/configs/configs.get.json
     post:
         description: |
-            Creates a new field.
+            Creates one or more new keys.
         body:
             application/json:
                 schema: !!null
@@ -753,8 +608,6 @@ traits:
                 body: 
                     application/json: 
                         example: !include examples/configs/configs.get.json
-            400:
-            415:
 
     /{configurationKey}: &_configurationKey
         type: datum
@@ -763,22 +616,16 @@ traits:
             configuration.
         get:
             description: |
-                Returns the field resource.
+                Returns the key resource.
             responses:
                 200:
                     body:
                         application/json: 
                             example: !include examples/configs/configs-id.get.json
                 404:
-        head:
-            description:
-                Returns the headers for the given field resource.
-            responses:
-                204:
-                404:
         put:
             description: |
-                Creates or Updates the field with the given id.
+                Creates or Updates the given configuration key
             body:
                 application/json:
                     schema: !!null
@@ -791,12 +638,9 @@ traits:
                     body:
                         application/json: 
                             example: !include examples/configs/configs-id.get.json
-                400:
-                404:
-                415:
         patch:
             description: |
-                Updates the field with the given id.
+                Updates the given key.
             body:
                 application/json:
                     schema: !!null
@@ -805,12 +649,10 @@ traits:
                     body:
                         application/json: 
                             example: !include examples/configs/configs-id.get.json
-                400:
                 404:
-                415:
         delete:
             description: |
-                Deletes the specified field.
+                Deletes the specified key.
             responses:
                 404:
 /about:
@@ -888,7 +730,7 @@ traits:
     /{groupId}:
         type: datum
         description: |
-            A document listing the user in a given group.
+            A document listing the users in a given group.
         get:
             responses:
                 200:
@@ -986,4 +828,3 @@ traits:
                     body:
                         application/json:
                             example: !include examples/well-known/openid-configuration.get.json
-

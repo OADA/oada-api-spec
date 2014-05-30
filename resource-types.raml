@@ -497,6 +497,8 @@
                                 [RFC]: http://www.ietf.org/rfc/rfc5789.txt "RFC5789"
         options: *_patchable
 
+### Begin useable resource types ###
+
 -   collection:
         usage: |
             The base type for any collection style resource. For example,
@@ -525,16 +527,31 @@
                 Get the <<resourcePathName|!singularize>>
                 with <<resourcePathName|!singularize>>Id =
                 {<<resourcePathName|!singularize>>Id}
+            responses:
+                404:
         head:
+            responses:
+                404:
         options:
+            responses:
+                404:
         put:
             description: |
                 Update the <<resourcePathName|!singularize>>
                 with <<resourcePathName|!singularize>>Id =
                 {<<resourcePathName|!singularize>>Id}
         delete:
+            responses:
+                404:
             description: |
                 Delete the <<resourcePathName|!singularize>>
+                with <<resourcePathName|!singularize>>Id =
+                {<<resourcePathName|!singularize>>Id}
+        patch:
+            responses:
+                404:
+            description: |
+                Patch the <<resourcePathName|!singularize>>
                 with <<resourcePathName|!singularize>>Id =
                 {<<resourcePathName|!singularize>>Id}
 
@@ -555,8 +572,14 @@
         type: _methodsType
         get:
             is: [ expandable ]
+            responses:
+                404:
         options:
+            responses:
+                404:
         delete:
+            responses:
+                404:
 
 -   informational:
         usage: |
