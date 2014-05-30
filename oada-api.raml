@@ -43,7 +43,7 @@ securitySchemes:
                     access_token: &access_token
                         type: string
                         description: |
-                            OAuth 2.0 token. Perfer the Authorization header
+                            OAuth 2.0 token. Prefer the Authorization header
                         example: 0b79bab50daca910b000d4f1a2b675d604257e42
                 headers:
                     Authorization: &authorization
@@ -68,324 +68,7 @@ securitySchemes:
                 accessTokenUri: https://{rootUri}/oauth2/token
                 authorizationGrants: [ token ]
 
-resourceTypes:
-    -   _common:
-            usage: |
-                This should *NOT* be used for any actual resource. Attributes
-                common across all methods should be defined here.
-            get?: &_common
-                description: |
-                    **TODO**: Write Method Description
-                securedBy: [ oauth_2_0 ]
-                # Start Hack fix until secureBy works
-                queryParameters:
-                    access_token: *access_token
-                # End Hack fix until secureBy works
-                headers:
-                    # Start Hack fix until secureBy works
-                    Authorization: *authorization
-                    # End Hack fix until secureBy works
-                responses:
-                    200?: &_resp200
-                        description: |
-                            OK. The request has succeeded. The information
-                            returned with the response is dependent on the
-                            method used in the request.
-                        headers: &_commonHeaders
-                            X-Rate-Limit-Limit:
-                                type: integer
-                                required: true
-                                description: |
-                                    The maximum number of requests allowed per
-                                    rate-limit window.
-                                example: "X-Rate-Limit-Limit: 100"
-                            X-Rate-Limit-Remaining:
-                                type: integer
-                                required: true
-                                description: |
-                                    The number of remaining requests allowed in
-                                    the current rate-limit window.
-                                example: "X-Rate-Limit-Remaining: 89"
-                            X-Rate-Limit-Reset:
-                                type: integer
-                                required: true
-                                description: |
-                                    The number of UTC epoch seconds until the
-                                    next rate-limit window begins.
-                                example: "X-Rate-Limit-Reset: 124"
-                    # Start Hack fix until secureBy works
-                    401: *resp401
-                    403: *resp403
-                    # End Hack fix until secureBy works
-                    404?: &_resp404
-                        description: |
-                            Not Found. The server has not found anything
-                            matching the Request-URI.
-                        headers: *_commonHeaders
-                    429: &_resp429
-                        description: |
-                            Too Many Requests. The request was rejected due to
-                            rate limiting. The request was not processed to
-                            determine its validity.
-                        headers: *_commonHeaders
-                        body:
-                            application/json:
-                                schema: !!null
-            head?: *_common
-            put?: *_common
-            post?: *_common
-            delete?: *_common
-            patch?: *_common
-
-    -   _commonGlue:
-            usage: |
-                This should NOT be used for any actual resource. Applies the
-                common attributes to the supported methods. This is a glue
-                layer needed because RAML does not support map merging. This
-                level can be used to require attributes that are required for
-                all resources.
-            type: _common
-            get?:
-                queryParameters:
-                    _expand:
-                        type: boolean
-                        default: false
-                        description: |
-                            Expand all document href properties to their actual
-                            resource.
-                headers:
-                    Accept:
-                        type: string
-                        required: true
-                        description: |
-                            Used to specify certain media types which are
-                            acceptable in the response.
-                        example: 'Accept: application/json, application/xml'
-                responses:
-                    200: *_resp200
-                    304: &_resp304
-                        description: |
-                            Not Modified. The result of the request is the same
-                            as the cached version at the client.
-                        headers: *_commonHeaders
-                    400?: &_resp400
-                        description: |
-                            Bad Request. The request could not be understood by
-                            the server due to malformed syntax.
-                        headers: *_commonHeaders
-            head?:
-                responses:
-                    204: &_resp204
-                        description: |
-                            No Content. Request was successful and there is no
-                            content to return.
-                        headers: *_commonHeaders
-                    400?: *_resp400
-            put?:
-                responses:
-                    200: *_resp200
-                    201: &_resp201
-                        description: |
-                            Created. The request has been fulfilled and
-                            resulted in a new resource being created.
-                        headers: *_commonHeaders
-                    400?: *_resp400
-                    412: &_resp412
-                        description: |
-                            One or more of the preconditions given in the
-                            request headers was not met. The request was not
-                            fulfilled.
-                        headers: *_commonHeaders
-                    415?: &_resp415
-                        description: |
-                            Unsupported Media Type. The request contains a body
-                            with an unsupported media type.
-                        headers: *_commonHeaders
-            post?:
-                responses:
-                    201: *_resp201
-                    400?: *_resp400
-                    415?: *_resp415
-            delete?:
-                responses:
-                    204: *_resp204
-                    409?: &_resp409
-                        description: |
-                            Conflict. The request could not be processed
-                            because the resource state is either currently in
-                            or would be left in a conflicted state.
-                        headers: *_commonHeaders
-            patch?:
-                responses:
-                    409: *_resp409
-                    412: *_resp412
-
-    -   _base:
-            usage: |
-                This should NOT be used for any actual resource. Attributes
-                common to a certain method type across all resources should be
-                defined here.
-            type: _commonGlue
-            get:
-                headers:
-                    If-None-Match:
-                        type: string
-                        required: false
-                        description: |
-                            Cached value received from the server in an `ETag`
-                            header the last time a `GET` on this succeeded.
-                            The server will use this to determine if the
-                            resource has changed and decide whether to respond
-                            with `304`.
-                        example: 'If-None-Match: "686897696a7c876b7e"'
-                responses:
-                    200:
-                        headers:
-                            ETag: &etagHeader
-                                type: string
-                                required: true
-                                description: |
-                                    An opaque identifier assigned by
-                                    the server to the specific version of the
-                                    resource contained in this response.  The
-                                    client can cache it for inclusion in a
-                                    future conditional `GET` on this resource.
-                                example: 'ETag: "686897696a7c876b7e"'
-                            Content-Type: &contentTypeHeader
-                                type: string
-                                required: true
-                                description: |
-                                    An indicator of the media type of the
-                                    response body.
-                                example: 'Content-Type: application/json'
-            head?:
-                responses:
-                    200:
-                        headers:
-                            ETag: *etagHeader 
-            put?:
-                headers:
-                    Content-Type: *contentTypeHeader
-                    Content-Length: &contentLengthHeader
-                        required: true
-                        type: integer
-                        description: |
-                            A Content-Length header is required to verify that
-                            the entire transmission was received.
-                    Content-MD5: &contentMD5Header
-                        required: false
-                        type: string
-                        description: |
-                            The optional Content-MD5 header is used to verify
-                            the received resource is error free. The header is
-                            defined in [RFC1864][RFC].
-                            [RFC]: http://www.ietf.org/rfc/rfc1864.txt "RFC1864"
-                    Content-Disposition?: &contentDispositionHeader
-                        type: string
-                        required: false
-                        description: |
-                            Can be used to specify, among other things, the
-                            desired name of the resource to be created by this
-                            request.  The headers usage in HTTP is defined in
-                            [RFC6266][RFC].
-                            [RFC]: http://www.ietf.org/rfc/rfc6266.txt "RFC6266"
-                        example: |
-                            Content-Disposition:
-                            attachment; filename="field.shp"
-                    If-Match: &ifMatchHeader
-                        type: string
-                        required: false
-                        description: |
-                            Cached value received from the server in an `ETag`
-                            header the last time a `GET` on this resource
-                            succeeded.  The server will use this to determine
-                            if the resource has changed and decide whether to
-                            respond with `412`.
-                        example: 'If-Match: "686897696a7c876b7e"'
-                responses:
-                    201: &_locationHeader
-                        headers:
-                            Location:
-                                type: string
-                                required: true
-                                description: |
-                                    The maximum number of requests allowed per
-                                    rate-limit window.
-            post?:
-                headers:
-                    Content-Type: *contentTypeHeader
-                    Content-Length: *contentLengthHeader
-                    Content-MD5: *contentMD5Header
-                    Content-Disposition?: *contentDispositionHeader
-                responses:
-                    201: *_locationHeader
-            patch?:
-                headers:
-                    Content-Type: *contentTypeHeader
-                    If-Match: *ifMatchHeader
-                    Content-Length: *contentLengthHeader
-                    Content-MD5: *contentMD5Header
-
-    -   _basePatchable:
-            type: _base
-            usage: |
-                This should NOT be used for any actual resource. Adds patch
-                support to the `_base` type.
-            patch:
-            get:
-                responses:
-                    200:
-                        headers:
-                            Accept-Patch:
-                                type: string
-                                required: true
-                                description: |
-                                    Patch formats accepted, as defined in
-                                    [RFC5789][RFC].
-                                    [RFC]: http://www.ietf.org/rfc/rfc5789.txt "RFC5789"
-
-    -   member:
-            usage: |
-                The base type for any member style resource.  For example,
-                `/resources/{resourceId}/properties/{key}`.
-            type: _basePatchable
-            get:
-            put:
-            delete:
-
-    -   collection:
-            usage: |
-                The base type for any collection style resource. For example,
-                `/resources`.
-            type: _base
-            get:
-                is: [ paginated: { defaultLimit: 100 }, filterable, expandable ]
-            post:
-
-    -   datum:
-            usage: |
-                The base type for any data type resource. For example,
-                `/resources/{id}`.
-            type: _basePatchable
-            get:
-            head:
-            put:
-            delete:
-
-    -   reference:
-            usage: |
-                The base type for resources which reference an actual resource
-                located elsewhere.
-            type: _base
-            get:
-            delete:
-
-    -   informational:
-            usage: |
-                The base type for any informational style resource. For
-                example, how `/about` describes the current user.
-            type: _base
-            get:
+resourceTypes: !include resource-types.raml
 
 traits:
     -   paginated:
@@ -449,14 +132,6 @@ traits:
         is: [ paginated: {defaultLimit: 100}, filterable ]
         responses:
             200:
-                headers:
-                    X-OADA-Resource-Properties: &OADAResourceProperties
-                        type: string
-                        description: |
-                            OADA resource properties that can not be directly
-                            modified by the user. For example resource creation
-                            time, modification time, format, create
-                            user, etc.
                 body: 
                     application/json: 
                         example: !include examples/resources/resources.get.json
@@ -495,14 +170,9 @@ traits:
                             The data blob to be uploaded.
             application/x-www-form-urlencoded: *formUpload
             "*/*":
-        responses:
-            201:
-                headers:
-                    X-OADA-Resource-Properties: *OADAResourceProperties
-            415:
 
     /{resourceId}:
-        type: datum
+        type: instance
         description: |
             Add, edit, and delete resources in storage.
         uriParameters:
@@ -515,26 +185,12 @@ traits:
                 Returns the contents of the given resource.
             responses:
                 200:
-                    headers:
-                        X-OADA-Resource-Properties: *OADAResourceProperties
                     body: 
                         application/json: 
                             example: !include examples/resources/resource.get.json
-                204:
-                    headers:
-                        X-OADA-Resource-Properties: *OADAResourceProperties
-                404:
         head:
             description: |
                 Returns the headers for the given resource.
-            responses:
-                200:
-                    headers:
-                        X-OADA-Resource-Properties: *OADAResourceProperties
-                204:
-                    headers:
-                        X-OADA-Resource-Properties: *OADAResourceProperties
-                404:
         put:
             description: |
                 Creates or Updates a resource with given resource id.
@@ -542,16 +198,9 @@ traits:
               Content-Disposition:
             responses:
                 200:
-                    headers:
-                        X-OADA-Resource-Properties: *OADAResourceProperties
                     body: 
                         application/json: 
                             example: !include examples/resources/resource.get.json
-                201:
-                    headers:
-                        X-OADA-Resource-Properties: *OADAResourceProperties
-                400:
-                404:
             queryParameters:
                directoryIds: *directoryIds
                name: *name
@@ -566,19 +215,17 @@ traits:
                 Content-Disposition:
             responses:
                 200:
-                    headers:
-                        X-OADA-Resource-Properties: *OADAResourceProperties
                     body: 
                         application/json: 
                             example: !include examples/resources/resource.get.json
         delete:
             description: |
-                Deletes the specified resoruce and its associated data.
+                Deletes the specified resource and its associated data.
             responses:
                 404:
 
         /data:
-            type: member
+            type: datum
             description: |
                 The raw data of the resource. It may be any type of blob. 
 
@@ -591,28 +238,18 @@ traits:
                     Returns the raw resource data.
                 responses:
                     200:
-                        headers:
-                            X-OADA-Resource-Properties: *OADAResourceProperties
                         body: 
                             application/json: 
                                 example: !include examples/resources/resource-data.get.json
-                    204:
-                        headers:
-                            X-OADA-Resource-Properties: *OADAResourceProperties
-                    404:
             put:
                 description: |
                     Creates or Updates the raw resource data.
                 responses:
                     200:
-                        headers:
-                            X-OADA-Resource-Properties: *OADAResourceProperties
                         body: 
                             application/json: 
                                 example: !include examples/resources/resource-data.get.json
                     201:
-                        headers:
-                            X-OADA-Resource-Properties: *OADAResourceProperties
                         body: 
                             application/json: 
                                 example: !include examples/resources/resource-data.get.json
@@ -621,19 +258,17 @@ traits:
                     Patches the raw resource data.
                 responses:
                     200:
-                        headers:
-                            X-OADA-Resource-Properties: *OADAResourceProperties
                         body: 
                             application/json: 
                                 example: !include examples/resources/resource-data.get.json
 
             /{key}:
-                type: datum
+                type: instance
                 description: |
                     Create, Update, and Delete the values of the given key.
 
                     If the file format stored in ../data has a URI mapping,
-                    e.g., JSON Pointer, XML XPath, etc, then {key} may be
+                    e.g., JSON Pointer, XML XPath, etc., then {key} may be
                     replaced with with any valid URI to access only the
                     associated portion of the document.
 
@@ -647,22 +282,13 @@ traits:
                 get:
                     description: |
                         Returns the value of the given key.
-                    responses:
-                        200:
-                            headers:
-                                X-OADA-Resource-Properties: *OADAResourceProperties
-                        204:
-                            headers:
-                                X-OADA-Resource-Properties: *OADAResourceProperties
-                        400:
-                        404:
                 put:
                     description: |
                         Updates or Creates a value under the given key. If the
                         key already exists, the original value will be lost.
 
                         If the file format stored in ../data has a URI mapping,
-                        e.g., JSON Pointer, XML XPath, etc, then {key} may be
+                        e.g., JSON Pointer, XML XPath, etc., then {key} may be
                         replaced with with any valid URI to access only the
                         associated portion of the document.
 
@@ -671,22 +297,12 @@ traits:
                     body:
                         application/json:
                             schema: !!null
-                    responses:
-                        200:
-                            headers:
-                                X-OADA-Resource-Properties: *OADAResourceProperties
-                        201:
-                            headers:
-                                X-OADA-Resource-Properties: *OADAResourceProperties
-                        400:
-                        404:
-                        415:
                 patch:
                     description: |
                         Patches a value under the given key.
 
                         If the file format stored in ../data has a URI mapping,
-                        e.g., JSON Pointer, XML XPath, etc, then {key} may be
+                        e.g., JSON Pointer, XML XPath, etc., then {key} may be
                         replaced with with any valid URI to access only the
                         associated portion of the document.
 
@@ -695,16 +311,12 @@ traits:
                     body:
                         application/json:
                             schema: !!null
-                    responses:
-                        200:
-                            headers:
-                                X-OADA-Resource-Properties: *OADAResourceProperties
                 post:
                     description: |
                         Adds a single or set of key-value pairs to the store.
 
                         If the file format stored in ../data has a URI mapping,
-                        e.g., JSON Pointer, XML XPath, etc, then {key} may be
+                        e.g., JSON Pointer, XML XPath, etc., then {key} may be
                         replaced with with any valid URI to access only the
                         associated portion of the document.
 
@@ -713,36 +325,20 @@ traits:
                     body:
                         application/json:
                             schema: !!null
-                    responses:
-                        200:
-                            headers:
-                                X-OADA-Resource-Properties: *OADAResourceProperties
-                        201:
-                            headers:
-                                X-OADA-Resource-Properties: *OADAResourceProperties
-                        400:
-                        404:
-                        415:
                 delete:
                     description: |
                         Deletes the given key and its value.
 
                         If the file format stored in ../data has a URI mapping,
-                        e.g., JSON Pointer, XML XPath, etc, then {key} may be
+                        e.g., JSON Pointer, XML XPath, etc., then {key} may be
                         replaced with with any valid URI to access only the
                         associated portion of the document.
 
                         If the file format stored in ../data does not have a URI
                         mapping, then {key} may not be used.
-                    responses:
-                        200:
-                            headers:
-                                X-OADA-Resource-Properties: *OADAResourceProperties
-                        404:
-                        400:
 
         /meta:
-            type: member
+            type: datum
             description: |
                 Document of metadata associated with the resource's data.
             get:
@@ -750,28 +346,19 @@ traits:
                     Returns the value of the given meta data key.
                 responses:
                     200:
-                        headers:
-                            X-OADA-Resource-Properties: *OADAResourceProperties
                         body: 
                             application/json: 
                                 example: !include examples/resources/resource-meta.get.json
-                    204:
-                        headers:
-                            X-OADA-Resource-Properties: *OADAResourceProperties
                     404:
             put:
                 description: |
                     Creates or Updates the value of the given meta data key.
                 responses:
                     200:
-                        headers:
-                            X-OADA-Resource-Properties: *OADAResourceProperties
                         body: 
                             application/json: 
                                 example: !include examples/resources/resource-meta.get.json
                     201:
-                        headers:
-                            X-OADA-Resource-Properties: *OADAResourceProperties
                         body: 
                             application/json: 
                                 example: !include examples/resources/resource-meta.get.json
@@ -780,8 +367,6 @@ traits:
                     Patches the value of the given meta data key.
                 responses:
                     200:
-                        headers:
-                            X-OADA-Resource-Properties: *OADAResourceProperties
                         body: 
                             application/json: 
                                 example: !include examples/resources/resource-meta.get.json
@@ -789,16 +374,10 @@ traits:
                 description: |
                     Returns the headers for the given resource's meta data.
                 responses:
-                    200:
-                        headers:
-                            X-OADA-Resource-Properties: *OADAResourceProperties
-                    204:
-                        headers:
-                            X-OADA-Resource-Properties: *OADAResourceProperties
                     404:
 
             /{key}:
-                type: datum
+                type: instance
                 description: |
                     Create, Update, and Delete the values of the given key.
                 uriParameters:
@@ -809,29 +388,10 @@ traits:
                 get:
                     description: |
                         Returns the value of the given key.
-                    responses:
-                        200:
-                            headers:
-                                X-OADA-Resource-Properties: *OADAResourceProperties
-                        204:
-                            headers:
-                                X-OADA-Resource-Properties: *OADAResourceProperties
-                        404:
                 put:
                     description: 
                         Updates or Creates a value under the given key. If the
                         key already exists, the original value will be lost.
-                    headers:
-                        Content-Disposition:
-                    responses:
-                        200:
-                            headers:
-                                X-OADA-Resource-Properties: *OADAResourceProperties
-                        201:
-                            headers:
-                                X-OADA-Resource-Properties: *OADAResourceProperties
-                        400:
-                        404:
                     queryParameters:
                         directoryIds: *directoryIds
                         name: *name
@@ -845,20 +405,9 @@ traits:
                     body:
                         application/json:
                             schema: !!null
-                    responses:
-                        200:
-                            headers:
-                                X-OADA-Resource-Properties: *OADAResourceProperties
-                        201:
-                            headers:
-                                X-OADA-Resource-Properties: *OADAResourceProperties
-                        400:
-                        404:
                 delete:
                     description: |
                         Deletes the given key and its value.
-                    responses:
-                        404:
 
         /formats:
             type: informational
@@ -866,7 +415,7 @@ traits:
                 description: |
                     Returns a collection of resource formats that the given 
                     resource can be returned as.
-                is: [ paginated : {defaultLimit: 100}, filterable ] 
+                is: [ paginated : {defaultLimit: 100}, filterable, expandable ] 
                 body:
                     application/json:
                         schema: !!null
@@ -875,7 +424,6 @@ traits:
                         body: 
                             application/json: 
                                 example: !include examples/resources/resource-formats.get.json
-                    404:
 
         /parents:
             type: collection
@@ -893,7 +441,6 @@ traits:
                         body: 
                             application/json: 
                                 example: !include examples/resources/resource-parents.get.json
-                    404:
             post:
                 description: |
                     Adds a parent directory to the given directory.
@@ -905,9 +452,6 @@ traits:
                         body: 
                             application/json: 
                                 example: !include examples/resources/resource-parents-id.get.json
-                    400:
-                    404:
-                    415:
 
             /{parentId}:
                 type: reference
@@ -940,11 +484,9 @@ traits:
                         body: 
                             application/json: 
                                 example: !include examples/resources/resource-children.get.json
-                    404:
             post:
                 description: |
                     Adds a child directory to the given directory.
-                    Returns `400` if adding a child to a resource with a blob.
                 body:
                     application/json:
                         schema: !!null
@@ -953,9 +495,6 @@ traits:
                         body: 
                             application/json: 
                                 example: !include examples/resources/resource-children-id.get.json
-                    400:
-                    404:
-                    415:
 
             /{childId}:
                 type: reference
@@ -996,7 +535,6 @@ traits:
                         body: 
                             application/json: 
                                 example: !include examples/resources/resource-permissions.get.json
-                    404:
             post:
                 description: |
                     Creates a permission for this resource.
@@ -1007,7 +545,7 @@ traits:
                                 example: !include examples/resources/resource-permissions-id.get.json
 
             /{permissionId}:
-                type: member
+                type: datum
                 get:
                     description: |
                         Returns the permission document associated with the 
@@ -1043,16 +581,16 @@ traits:
                                     example: !include examples/resources/resource-permissions-id.get.json
                         404:
 
-/configs:
+/configurations:
     type: collection
     description: |
         Explore and manage farm configuration data such as fields, machines,
         etc. Eventually this data will help directly query resources. 
     get:
         description: |
-            Returns a paginated collection of all fields owned by the currently
-            authenticated user. The results can be limited by an optional query
-            parameter filter.
+            Returns a paginated collection of all configurations for the
+            currently authenticated user. The results can be limited by an
+            optional query parameter filter.
         is: [ paginated: {defaultLimit: 100}, filterable ]
         responses:
             200:
@@ -1061,7 +599,7 @@ traits:
                         example: !include examples/configs/configs.get.json
     post:
         description: |
-            Creates a new field.
+            Creates one or more new keys.
         body:
             application/json:
                 schema: !!null
@@ -1070,32 +608,24 @@ traits:
                 body: 
                     application/json: 
                         example: !include examples/configs/configs.get.json
-            400:
-            415:
 
     /{configurationKey}: &_configurationKey
-        type: member
+        type: datum
         description: |
             Custom key heirachy that resloves a resource that is the
             configuration.
         get:
             description: |
-                Returns the field resource.
+                Returns the key resource.
             responses:
                 200:
                     body:
                         application/json: 
                             example: !include examples/configs/configs-id.get.json
                 404:
-        head:
-            description:
-                Returns the headers for the given field resource.
-            responses:
-                204:
-                404:
         put:
             description: |
-                Creates or Updates the field with the given id.
+                Creates or Updates the given configuration key
             body:
                 application/json:
                     schema: !!null
@@ -1108,12 +638,9 @@ traits:
                     body:
                         application/json: 
                             example: !include examples/configs/configs-id.get.json
-                400:
-                404:
-                415:
         patch:
             description: |
-                Updates the field with the given id.
+                Updates the given key.
             body:
                 application/json:
                     schema: !!null
@@ -1122,12 +649,10 @@ traits:
                     body:
                         application/json: 
                             example: !include examples/configs/configs-id.get.json
-                400:
                 404:
-                415:
         delete:
             description: |
-                Deletes the specified field.
+                Deletes the specified key.
             responses:
                 404:
 /about:
@@ -1159,7 +684,7 @@ traits:
                         example: !include examples/users/users.get.json
 
     /{userId}:
-        type: member
+        type: datum
         description: |
             A document describing various information about a given user.
         get:
@@ -1203,9 +728,9 @@ traits:
                         example: !include examples/groups/groups.get.json
 
     /{groupId}:
-        type: member
+        type: datum
         description: |
-            A document listing the user in a given group.
+            A document listing the users in a given group.
         get:
             responses:
                 200:
@@ -1248,7 +773,7 @@ traits:
                         example: !include examples/authorizations/authorizations.get.json
 
     /{authorizationId}:
-        type: member
+        type: datum
         description: |
             A document describing the details of a particular authorization.
             For example: assignee, scope, expiration time, etc.
@@ -1303,4 +828,3 @@ traits:
                     body:
                         application/json:
                             example: !include examples/well-known/openid-configuration.get.json
-
