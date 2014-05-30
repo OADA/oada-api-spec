@@ -1,0 +1,152 @@
+{
+    "href": "https://api.openag.io/resources/ixm24ws",
+    "etag": "d3fc9278c677bdb7af3781a1ebc2ec090c14f5f3",
+    "title": "Frank's Yield",
+    "mimeType": "application/vnd.oada.yield+json",
+    "created": "1985-04-12T23:20:50.52Z",
+    "createdBy": {
+        "href": "https://api.openag.io/users/kdufe3f",
+        "account": "frank@agidentity.com",
+        "name": "Frank Fellow",
+        "picture": {
+            "href": "http://www.gravatar.com/avatar/c7e1ee573fc6b0956a4455560d5839d9"
+        },
+        "email": "frank@agcloud.com"
+    },
+    "modified": "1985-04-12T23:20:50.52Z",
+    "modifiedBy": {
+        "href": "https://api.openag.io/users/kdufe3f",
+        "account": "frank@agidentity.com",
+        "name": "Frank Fellow",
+        "picture": {
+            "href": "http://www.gravatar.com/avatar/c7e1ee573fc6b0956a4455560d5839d9"
+        },
+        "email": "frank@agcloud.com"
+    },
+    "data": {
+        "href": "https://api.openag.io/resources/ixm24ws/data",
+        "etag": "164d48c47dc179df4ae7370a30d5ad2ef5460db3",
+        "totalYield": {
+            "value": 5.6,
+            "unit": "bushel"
+        },
+        "crs": {
+            "type": "name",
+            "properties": {
+                "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+            }
+        },
+        "type": "FeatureCollection",
+        "bbox": [40.42426718029455, 40.42429718029455, -86.841822197086, -86.841852197086],
+        "features": [{
+            "type": "Feature",
+            "geometery": {
+                "type": "Point",
+                "coordinates": [40.42426718029455, -86.841822197086]
+            },
+            "properties": {
+                "yield": {
+                    "value": 1.2,
+                    "unit": "bushel"
+                }
+            }
+        },
+        {
+            "type": "Feature",
+            "geometery": {
+                "type": "Point",
+                "coordinates": [40.42429718029455, -86.841852197086]
+            },
+            "properties": {
+                "yield": {
+                    "value": 4.2,
+                    "unit": "bushel"
+                }
+            }
+        }]
+    },
+    "metadata": {
+        "href": "https://api.openag.io/resources/ixm24ws/metadata",
+        "etag": "9a9a02cb51185d3fe1a6d5546d2659f8108aa425",
+        "yeild": {
+            "value": 5.6,
+            "unit": "bushel"
+        }
+    },
+    "format": {
+        "href": "https://api.openag.io/resources/ixm24ws/format",
+        "etag": "9cd8484acac0f9d787c714b95e0f36d07e3ed0cf",
+        "transforms": {
+            "application/vnd.oada.yield+json": {
+                "lossy": false,
+                "name": "OADA GeoJson Yield Open Format",
+                "openFormat": true
+            },
+            "application/json": {
+                "lossy": false,
+                "name": "JavaScript Object Notation",
+                "openFormat": false
+            },
+            "application/netcdf": {
+                "lossy": false,
+                "name": "Network Common Data Form",
+                "openFormat": true
+            },
+            "application/shape": {
+                "lossy": false,
+                "name": "Esri Shapefile",
+                "openFromat": false
+            }
+        }
+    },
+    "parents": {
+        "href": "https://api.openag.io/resources/ixm24ws/parents",
+        "etag": "a05d0b270af8d480c4c8222243f0ab58ed0d2770",
+        "items": [{
+            "href": "https://api.openag.io/resources/ixm24ws/parents/me30fzp",
+            "resource": {
+                "href": "https://api.openag.io/resources/me30fzp"
+            }
+        },
+        {
+            "href": "https://api.openag.io/resources/ixm24ws/parents/me30fzp",
+            "resource": {
+                "href": "https://api.openag.io/resources/me30fzp"
+            }
+        }]
+    },
+    "children": {
+        "href": "https://api.openag.io/resources/ixm24ws/children",
+        "etag": "fe5215584c850cc978bedaed0b91da2e36007389",
+        "items": [{
+            "href": "https://api.openag.io/resources/ixm24ws/children/kl3j93s",
+            "resource": {
+                "href": "https://api.openag.io/resources/kl3j93s"
+            }
+        },
+        {
+            "href": "https://api.openag.io/resources/ixm24ws/parents/op302xa",
+            "resource": {
+                "href": "https://api.openag.io/resources/op302xa"
+            }
+        }]
+    },
+    "permissions": {
+        "href": "https://api.openag.io/resources/ixm24ws/permissions",
+        "etag": "d099fcbe546c2282ceea48c21cd14aebf8b0c055",
+        "items": [{
+            "href": "https://api.openag.io/resources/ixm24ws/permissions/jfi30x9",
+            "user": {
+                "href": "https://api.openag.io/users/idnmz83",
+                "account": "frank@agidentity.com",
+                "name": "Frank Fellow",
+                "picture": {
+                    "href": "http://www.gravatar.com/avatar/c7e1ee573fc6b0956a4455560d5839d9"
+                },
+                "email": "frank@agcloud.com"
+            },
+            "type": "user/group/IdP/anyone",
+            "level": "owner/writer/reader"
+        }]
+    }
+}

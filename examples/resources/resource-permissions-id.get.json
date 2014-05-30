@@ -1,0 +1,9 @@
+{
+    "href": "https://api.openag.io/resources/ixm24ws/permissions",
+    "etag": "akdsjfa93jadjskclaj934jfq93cudosjacadhf9",
+    "user": {
+        "href": "https://api.openag.io/users/idnmz83"
+    },
+    "type": "user/group/IdP/anyone",
+    "level": "owner/writer/reader"
+}

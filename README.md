@@ -8,7 +8,7 @@ OADA is openly developed and built under the MIT License.
 ## Current Version
 The current version of the OADA API specification is intended to be a draft revision to seek input and feedback from the larger precision ag community.
 
-The draft specification has been defined in the RESTful API Modeling Language ([RAML](http://raml.org/)). The draft API specification in its entirety can be found here: [oada-api.raml](oada-api.raml)
+The draft specification has been defined in the RESTful API Modeling Language ([RAML](http://raml.org/)). The draft API specification in its entirety can be found here: [oada-api.raml](https://github.com/OADA/oada-api-spec/blob/raml/v0_2/oada-api.raml)
 
 The draft specification can also be viewed with RAML api-console project developed by [mulesoft/api-console](https://github.com/mulesoft/api-console). A OADA specific version that reads directly from the OADA github repository can be found at the following links:
 
@@ -20,16 +20,21 @@ The draft specification can also be viewed with RAML api-console project develop
 ## Authentication
 OADA APIs use the open authorization protocol [OAuth 2.0](http://oauth.net/2/) to secure access to grower data.
 
-## API Endpoints
+## API Endpoints (todo)
+<!---
  * [Files](sections/files.md)
  * [Metadata](sections/metadata.md)
  * [Search](sections/search.md)
  * [Support](sections/support.md)
+-->
 
-## Schemas
+## Schemas (todo)
  * [Data Types](sections/data-types.md)
+
+<!---
  * [File Formats](sections/file-formats.md)
  * [File Metadata](sections/file-metadata.md)
+-->
  
 ## Verification Suite
 TODO
