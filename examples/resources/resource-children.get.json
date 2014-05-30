@@ -1,0 +1,10 @@
+{
+    "href": "https://api.openag.io/resources/ixm24ws/children",
+    "etag": "fe5215584c850cc978bedaed0b91da2e36007389",
+    "items": [{
+        "href": "https://api.openag.io/resources/ixm24ws/children/kl3j93s"
+    },
+    {
+        "href": "https://api.openag.io/resources/ixm24ws/parents/op302xa"
+    }]
+}

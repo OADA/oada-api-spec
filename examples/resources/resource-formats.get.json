@@ -1,0 +1,26 @@
+{
+    "href": "https://api.openag.io/resources/ixm24ws/format",
+    "etag": "9cd8484acac0f9d787c714b95e0f36d07e3ed0cf",
+    "transforms": {
+        "application/vnd.oada.yield+json": {
+            "lossy": false,
+            "name": "OADA GeoJson Yield Open Format",
+            "openFormat": true
+        },
+        "application/json": {
+            "lossy": false,
+            "name": "JavaScript Object Notation",
+            "openFormat": false
+        },
+        "application/netcdf": {
+            "lossy": false,
+            "name": "Network Common Data Form",
+            "openFormat": true
+        },
+        "application/shape": {
+            "lossy": false,
+            "name": "Esri Shapefile",
+            "openFromat": false
+        }
+    }
+}

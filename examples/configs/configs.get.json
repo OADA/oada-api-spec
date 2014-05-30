@@ -1,0 +1,11 @@
+{
+    "href": "https://api.openag.io/configs",
+    "etag": "uiekanckjna721hnxccf2qxj8c7ds567cfa3ra3f",
+    "items": [{
+        "href": "https://api.openag.io/configs/fields"
+    },
+    {
+        "href": "https://api.openag.io/configs/prescriptions"
+    }],
+    "resource": {}
+}
