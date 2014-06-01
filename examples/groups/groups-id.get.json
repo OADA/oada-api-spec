@@ -1,7 +1,7 @@
 {
     "href": "https://api.openag.io/groups/jf72jsd",
     "etag": "9320kAJca9aclidfjkadsfjoaifckljaa726472e",
-    "title": "Employees",
+    "name": "Employees",
     "members": [{
         "href": "https://api.openag.io/users/kdufe3f"
     },
