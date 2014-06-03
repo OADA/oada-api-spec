@@ -197,7 +197,7 @@
                 access_token:
                     type: string
                     description: |
-                        OAuth 2.0 token. Perfer the Authorization header
+                        OAuth 2.0 token. Prefer the Authorization header.
                     example: 0b79bab50daca910b000d4f1a2b675d604257e42
             # End Hack fix until secureBy works
             headers:
@@ -223,7 +223,7 @@
                 201?:
                     headers:
                         Content-Encoding:
-                        COntent-Disposition:
+                        Content-Disposition:
                         Content-Length:
                         Content-MD5:
                         Content-Type:
@@ -374,6 +374,18 @@
             Assign headers and responses to each method
         type: _responsesType
         get?:
+            queryParameters:
+                _fields:
+                    type: string
+                    description: |
+                        A list of top level keys that are returned. 
+
+                        All keys are returned by default when the parameter is
+                        omitted. 
+
+                        No response is generated if parameter is set to an empty
+                        string.
+                    example: "href, etag"
             headers:
                 If-None-Match:
             responses:
@@ -442,7 +454,6 @@
                 Content-MD5:
                 Content-Type:
             responses:
-                200:
                 201:
                 301:
                 307:
