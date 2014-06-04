@@ -28,5 +28,8 @@
     },
     "permissions": {
         "href": "https://api.openag.io/resources/ixm24ws/permissions"
+    },
+    "sync": {
+        "href": "https://api.openag.io/resources/ixm24ws/syncs"
     }
 }
