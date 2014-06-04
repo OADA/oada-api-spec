@@ -1,7 +1,7 @@
 {
     "href": "https://api.openag.io/resources/ixm24ws",
     "etag": "d3fc9278c677bdb7af3781a1ebc2ec090c14f5f3",
-    "title": "Frank's Yield",
+    "name": "Frank's Yield",
     "mimeType": "application/vnd.oada.yield+json",
     "created": "1985-04-12T23:20:50.52Z",
     "createdBy": {
@@ -50,8 +50,7 @@
                     "unit": "bushel"
                 }
             }
-        },
-        {
+        }, {
             "type": "Feature",
             "geometery": {
                 "type": "Point",
@@ -107,8 +106,7 @@
             "resource": {
                 "href": "https://api.openag.io/resources/me30fzp"
             }
-        },
-        {
+        }, {
             "href": "https://api.openag.io/resources/ixm24ws/parents/me30fzp",
             "resource": {
                 "href": "https://api.openag.io/resources/me30fzp"
@@ -123,8 +121,7 @@
             "resource": {
                 "href": "https://api.openag.io/resources/kl3j93s"
             }
-        },
-        {
+        }, {
             "href": "https://api.openag.io/resources/ixm24ws/parents/op302xa",
             "resource": {
                 "href": "https://api.openag.io/resources/op302xa"
@@ -147,6 +144,36 @@
             },
             "type": "user/group/IdP/anyone",
             "level": "owner/writer/reader"
+        }]
+    },
+    "syncs": {
+        "href": "https://api.openag.io/resources/ixm24ws/syncs",
+        "etag": "kj3idua8c78dji3weauowfusofgcykjhaelwr38d",
+        "items": [{
+            "href": "https://api.openag.io/resources/ixm24ws/syncs/2xf382s",
+            "etag": "cjkawq8327r4ifhjuihdvfaewytr43kj5haief7a",
+            "type": "poll",
+            "url": "https://api.agcloud.com/resources/jdkx82d",
+            "headers": {
+                "X-Custom": "Custom Value"
+            },
+            "latest_etag": "d3fc9278c677bdb7af3781a1ebc2ec090c14f5f3",
+            "interval": 3600,
+            "authorization": {
+                "href": "https://api.openag.io/authorizations/8ackam3"
+            }
+        }, {
+            "href": "https://api.openag.io/resources/ixm24ws/syncs/2xf382s",
+            "etag": "cjkawq8327r4ifhjuihdvfaewytr43kj5haief7a",
+            "type": "push",
+            "url": "https://api.agcloud.com/resources/jdkx82d",
+            "headers": {
+                "X-Custom": "Custom Value"
+            },
+            "events": ["change"],
+            "authorization": {
+                "href": "https://api.openag.io/authorizations/8ackam3"
+            }
         }]
     }
 }
