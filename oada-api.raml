@@ -140,6 +140,15 @@ traits:
             Uploads a new resource and returns the resulting document. 
         headers:
             Content-Disposition:
+        queryParameters:
+            derivativeOf: &derivativeOf
+                type: string
+                description: |
+                    Optional parameter. If included it must be a valid href to
+                    the resource of which the data is a derivative of. The
+                    OADA implementation will automatically add the new resource
+                    to the referenced resources derivative list.
+                example: https://openag.io/resources/d3jcds9
         body:
             multipart/form-data: &formUpload
                 formParameters:
@@ -548,6 +557,7 @@ traits:
                                 application/json: 
                                     example: !include examples/resources/resource-permissions-id.get.json
                         404:
+
         /syncs: 
             type: collection
             description: |
@@ -610,6 +620,49 @@ traits:
                                 application/json: 
                                     example: !include examples/resources/resource-syncs-id_push.get.json
                         404:
+
+        /derivatives:
+            type: collection
+            description: |
+                Add, remove, and list resources that are derivatives of this 
+                resource.
+            get:
+                description: |
+                    Returns a paginated collection of all the resources that are
+                    derivatives to the given resource. The results can be
+                    limited by an optional query parameter filter.
+                is: [ paginated : {defaultLimit: 100}, filterable ]
+                responses:
+                    200:
+                        body: 
+                            application/json: 
+                                example: !include examples/resources/resource-derivatives.get.json
+            post:
+                description: |
+                    Adds a derivative to the given resource.
+                body:
+                    application/json:
+                        schema: !!null
+                responses:
+                    201:
+                        body: 
+                            application/json: 
+                                example: !include examples/resources/resource-derivatives-id.get.json
+
+            /{derivativeId}:
+                type: reference
+                uriParameters:
+                    derivativeId:
+                        type: string
+                        description: |
+                            The id of a particular derivative for this
+                            resource.
+                get:
+                    responses:
+                        200:
+                            body: 
+                                application/json: 
+                                    example: !include examples/resources/resource-derivatives-id.get.json
 
 /configurations:
     type: collection

@@ -146,6 +146,19 @@
             "level": "owner/writer/reader"
         }]
     },
+    "derivatives": {
+        "href": "https://api.openag.io/resources/ixm24ws/derivatives",
+        "etag": "kdjf93fsdklcjasfldafu9afoicjajh3ofay8y3x",
+        "items": [{
+            "contentType": "application/shape",
+            "parent": {
+                "href": "https://api.agcloud.com/resource/me30fzp"
+            },
+            "resource": {
+                "href": "https://api.agcloud.com/resource/djx83sc"
+            }
+        }]
+    }
     "syncs": {
         "href": "https://api.openag.io/resources/ixm24ws/syncs",
         "etag": "kj3idua8c78dji3weauowfusofgcykjhaelwr38d",
