@@ -165,7 +165,7 @@ traits:
                 200:
                     body: 
                         application/json: 
-                            example: !include examples/resources/resource.get.json
+                            example: !include examples/resources/resources-id.get.json
         head:
             description: |
                 Returns the headers for the given resource.
@@ -178,7 +178,7 @@ traits:
                 200:
                     body: 
                         application/json: 
-                            example: !include examples/resources/resource.get.json
+                            example: !include examples/resources/resources-id.get.json
             body:
                 multipart/form-data: *formUpload
         patch:
@@ -190,7 +190,7 @@ traits:
                 200:
                     body: 
                         application/json: 
-                            example: !include examples/resources/resource.get.json
+                            example: !include examples/resources/resources-id.get.json
         delete:
             description: |
                 Deletes the specified resource and its associated data.
@@ -213,7 +213,7 @@ traits:
                     200:
                         body: 
                             application/json: 
-                                example: !include examples/resources/resource-data.get.json
+                                example: !include examples/resources/resources-id-data.get.json
             put:
                 description: |
                     Creates or Updates the raw resource data.
@@ -221,11 +221,11 @@ traits:
                     200:
                         body: 
                             application/json: 
-                                example: !include examples/resources/resource-data.get.json
+                                example: !include examples/resources/resources-id-data.get.json
                     201:
                         body: 
                             application/json: 
-                                example: !include examples/resources/resource-data.get.json
+                                example: !include examples/resources/resources-id-data.get.json
             patch:
                 description: |
                     Patches the raw resource data.
@@ -233,7 +233,7 @@ traits:
                     200:
                         body: 
                             application/json: 
-                                example: !include examples/resources/resource-data.get.json
+                                example: !include examples/resources/resources-id-data.get.json
 
             /{key}:
                 type: instance
@@ -321,7 +321,7 @@ traits:
                     200:
                         body: 
                             application/json: 
-                                example: !include examples/resources/resource-meta.get.json
+                                example: !include examples/resources/resources-id-meta.get.json
                     404:
             put:
                 description: |
@@ -330,11 +330,11 @@ traits:
                     200:
                         body: 
                             application/json: 
-                                example: !include examples/resources/resource-meta.get.json
+                                example: !include examples/resources/resources-id-meta.get.json
                     201:
                         body: 
                             application/json: 
-                                example: !include examples/resources/resource-meta.get.json
+                                example: !include examples/resources/resources-id-meta.get.json
             patch:
                 description: |
                     Patches the value of the given meta data key.
@@ -342,7 +342,7 @@ traits:
                     200:
                         body: 
                             application/json: 
-                                example: !include examples/resources/resource-meta.get.json
+                                example: !include examples/resources/resources-id-meta.get.json
             head:
                 description: |
                     Returns the headers for the given resource's meta data.
@@ -391,7 +391,7 @@ traits:
                     200:
                         body: 
                             application/json: 
-                                example: !include examples/resources/resource-formats.get.json
+                                example: !include examples/resources/resources-id-formats.get.json
 
         /parents:
             type: collection
@@ -408,7 +408,7 @@ traits:
                     200:
                         body: 
                             application/json: 
-                                example: !include examples/resources/resource-parents.get.json
+                                example: !include examples/resources/resources-id-parents.get.json
             post:
                 description: |
                     Adds a parent directory to the given directory.
@@ -419,7 +419,7 @@ traits:
                     201:
                         body: 
                             application/json: 
-                                example: !include examples/resources/resource-parents-id.get.json
+                                example: !include examples/resources/resources-id-parents-id.get.json
 
             /{parentId}:
                 type: reference
@@ -434,7 +434,7 @@ traits:
                         200:
                             body: 
                                 application/json: 
-                                    example: !include examples/resources/resource-parents-id.get.json
+                                    example: !include examples/resources/resources-id-parents-id.get.json
 
         /children:
             type: collection
@@ -451,7 +451,7 @@ traits:
                     200:
                         body: 
                             application/json: 
-                                example: !include examples/resources/resource-children.get.json
+                                example: !include examples/resources/resources-id-children.get.json
             post:
                 description: |
                     Adds a child directory to the given directory.
@@ -462,7 +462,7 @@ traits:
                     201:
                         body: 
                             application/json: 
-                                example: !include examples/resources/resource-children-id.get.json
+                                example: !include examples/resources/resources-id-children-id.get.json
 
             /{childId}:
                 type: reference
@@ -473,7 +473,7 @@ traits:
                         200:
                             body: 
                                 application/json: 
-                                    example: !include examples/resources/resource-children-id.get.json
+                                    example: !include examples/resources/resources-id-children-id.get.json
 
         /permissions:
             type: collection
@@ -502,7 +502,7 @@ traits:
                     200:
                         body: 
                             application/json: 
-                                example: !include examples/resources/resource-permissions.get.json
+                                example: !include examples/resources/resources-id-permissions.get.json
             post:
                 description: |
                     Creates a permission for this resource.
@@ -510,7 +510,7 @@ traits:
                     201:
                         body:
                             application/json:
-                                example: !include examples/resources/resource-permissions-id.get.json
+                                example: !include examples/resources/resources-id-permissions-id.get.json
 
             /{permissionId}:
                 type: datum
@@ -522,7 +522,7 @@ traits:
                         200:
                             body: 
                                 application/json: 
-                                    example: !include examples/resources/resource-permissions-id.get.json
+                                    example: !include examples/resources/resources-id-permissions-id.get.json
                         404:
                 put:
                     description: |
@@ -532,11 +532,11 @@ traits:
                         200:
                             body: 
                                 application/json: 
-                                    example: !include examples/resources/resource-permissions-id.get.json
+                                    example: !include examples/resources/resources-id-permissions-id.get.json
                         201:
                             body: 
                                 application/json: 
-                                    example: !include examples/resources/resource-permissions-id.get.json
+                                    example: !include examples/resources/resources-id-permissions-id.get.json
                         404:
                 patch:
                     description: |
@@ -546,7 +546,7 @@ traits:
                         200:
                             body: 
                                 application/json: 
-                                    example: !include examples/resources/resource-permissions-id.get.json
+                                    example: !include examples/resources/resources-id-permissions-id.get.json
                         404:
         /syncs: 
             type: collection
@@ -564,7 +564,7 @@ traits:
                     200:
                         body: 
                             application/json: 
-                                example: !include examples/resources/resource-syncs.get.json
+                                example: !include examples/resources/resources-id-syncs.get.json
             post:
                 description: |
                     Creates a sync for this resource.
@@ -572,7 +572,7 @@ traits:
                     201:
                         body:
                             application/json:
-                                example: !include examples/resources/resource-syncs-id_poll.get.json
+                                example: !include examples/resources/resources-id-syncs-id_poll.get.json
 
             /{syncId}:
                 type: datum
@@ -584,7 +584,7 @@ traits:
                         200:
                             body: 
                                 application/json: 
-                                    example: !include examples/resources/resource-syncs-id_push.get.json
+                                    example: !include examples/resources/resources-id-syncs-id_push.get.json
                         404:
                 put:
                     description: |
@@ -594,11 +594,11 @@ traits:
                         200:
                             body: 
                                 application/json: 
-                                    example: !include examples/resources/resource-syncs-id_poll.get.json
+                                    example: !include examples/resources/resources-id-syncs-id_poll.get.json
                         201:
                             body: 
                                 application/json: 
-                                    example: !include examples/resources/resource-syncs-id_push.get.json
+                                    example: !include examples/resources/resources-id-syncs-id_push.get.json
                         404:
                 patch:
                     description: |
@@ -608,7 +608,7 @@ traits:
                         200:
                             body: 
                                 application/json: 
-                                    example: !include examples/resources/resource-syncs-id_push.get.json
+                                    example: !include examples/resources/resources-id-syncs-id_push.get.json
                         404:
 
 /configurations:
