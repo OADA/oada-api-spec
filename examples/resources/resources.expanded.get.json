@@ -2,6 +2,7 @@
     "href": "https://api.openag.io/resources/ixm24ws",
     "etag": "d3fc9278c677bdb7af3781a1ebc2ec090c14f5f3",
     "guid": "https://api.openag.io/resources/ixm24ws",
+    "changeId": "xj3jdc5",
     "name": "Frank's Yield",
     "mimeType": "application/vnd.oada.yield+json",
     "created": "1985-04-12T23:20:50.52Z",
@@ -52,17 +53,17 @@
                 }
             }
         }, {
-            "type": "Feature",
-            "geometery": {
-                "type": "Point",
-                "coordinates": [40.42429718029455, -86.841852197086]
-            },
-            "properties": {
-                "yield": {
-                    "value": 4.2,
-                    "unit": "bushel"
-                }
+        "type": "Feature",
+        "geometery": {
+            "type": "Point",
+            "coordinates": [40.42429718029455, -86.841852197086]
+        },
+        "properties": {
+            "yield": {
+                "value": 4.2,
+                "unit": "bushel"
             }
+        }
         }]
     },
     "metadata": {
@@ -99,6 +100,28 @@
             }
         }
     },
+    "changes": {
+        "href": "https://api.openag.io/changes",
+        "etag": "askjdhf823hasjdhl38ayf8a4tad8ycehr3krhf4",
+        "items": [{
+            "href": "https://api.openag.io/changes/vda33d4",
+            "etag": "83xhaw87fay3ofcbnkljiufoa83u8932yodasdcy",
+            "changeId": "vda33d4",
+            "deleted": "false",
+            "resource": {
+                "href": "https://api.agcloud.com/resources/ixm24ws"
+            }
+        },
+        {
+            "href": "https://api.openag.io/changes/jft567d",
+            "etag": "83xhaw87fay3ofcbnkljiufoa83u8932yodasdcy",
+            "changeId": "jft567d",
+            "deleted": "false",
+            "resource": {
+                "href": "https://api.agcloud.com/resources/kl3j93s"
+            }
+        }]
+    },
     "parents": {
         "href": "https://api.openag.io/resources/ixm24ws/parents",
         "etag": "a05d0b270af8d480c4c8222243f0ab58ed0d2770",
@@ -107,7 +130,8 @@
             "resource": {
                 "href": "https://api.openag.io/resources/me30fzp"
             }
-        }, {
+        },
+        {
             "href": "https://api.openag.io/resources/ixm24ws/parents/me30fzp",
             "resource": {
                 "href": "https://api.openag.io/resources/me30fzp"
@@ -123,10 +147,10 @@
                 "href": "https://api.openag.io/resources/kl3j93s"
             }
         }, {
-            "href": "https://api.openag.io/resources/ixm24ws/parents/op302xa",
-            "resource": {
-                "href": "https://api.openag.io/resources/op302xa"
-            }
+        "href": "https://api.openag.io/resources/ixm24ws/parents/op302xa",
+        "resource": {
+            "href": "https://api.openag.io/resources/op302xa"
+        }
         }]
     },
     "permissions": {
@@ -171,12 +195,13 @@
             "headers": {
                 "X-Custom": "Custom Value"
             },
-            "latest_etag": "d3fc9278c677bdb7af3781a1ebc2ec090c14f5f3",
+            "lastChangeId": "kjex9a3",
             "interval": 3600,
             "authorization": {
                 "href": "https://api.openag.io/authorizations/8ackam3"
             }
-        }, {
+        },
+        {
             "href": "https://api.openag.io/resources/ixm24ws/syncs/2xf382s",
             "etag": "cjkawq8327r4ifhjuihdvfaewytr43kj5haief7a",
             "type": "push",

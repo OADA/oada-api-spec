@@ -99,13 +99,6 @@ traits:
                         TODO: The exact format of search queries is still under
                         development.
                     example:
-                lastModified:
-                    type: string
-                    required: false
-                    description: |
-                        Find all elements that have been modified at or after
-                        the given date.    
-                    example: 1985-04-12T23:20:50.52Z
             responses:
                 400:
 
@@ -402,6 +395,26 @@ traits:
                             application/json: 
                                 example: !include examples/resources/resources-id-formats.get.json
 
+        /changes:
+            type: informational
+            get:
+                description: |
+                    Returns a collection of changes to this resource and all of
+                    the resources in its tree of children.
+                queryParameters:
+                    lastChangeId:
+                        type: string
+                        description: |
+                            Optional. If provided the returned list of changes
+                            starts with the change directly following the given
+                            id.
+                is: [ paginated : {defaultLimit: 100}, filterable, expandable ] 
+                responses:
+                    200:
+                        body: 
+                            application/json: 
+                               example: !include examples/resources/resources-id-changes.get.json
+
         /parents:
             type: collection
             description: |
@@ -663,6 +676,40 @@ traits:
                             body: 
                                 application/json: 
                                     example: !include examples/resources/resources-id-derivatives-id.get.json
+/changes:
+    type: informational
+    get:
+        description: |
+            Returns a collection of changes to all available resources.
+        queryParameters:
+            lastChangeId:
+                type: string
+                description: |
+                    Optional. If provided the returned list of changes
+                    starts with the change directly following the given
+                    id.
+        is: [ paginated : {defaultLimit: 100}, filterable, expandable ] 
+        responses:
+            200:
+                body: 
+                    application/json: 
+                        example: !include examples/changes/changes.get.json
+
+    /{changeId}:
+        type: informational
+        uriParameters:
+            changeId:
+                type: string
+                description: |
+                    The id of a specific change.
+        get:
+            description: |
+                Returns a document describing a particular change.
+            responses:
+                200:
+                    body: 
+                        application/json: 
+                            example: !include examples/changes/changes-id.get.json
 
 /configurations:
     type: collection

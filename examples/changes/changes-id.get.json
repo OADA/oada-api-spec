@@ -1,0 +1,9 @@
+{
+    "href": "https://api.openag.io/changes/vda33d4",
+    "etag": "83xhaw87fay3ofcbnkljiufoa83u8932yodasdcy",
+    "changeId": "vda33d4",
+    "deleted": "false",
+    "resource": {
+        "href": "https://api.agcloud.com/resources/dxkf337"
+    }
+}

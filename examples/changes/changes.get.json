@@ -1,0 +1,10 @@
+{
+    "href": "https://api.openag.io/changes",
+    "etag": "askjdhf823hasjdhl38ayf8a4tad8ycehr3krhf4",
+    "items": [{
+        "href": "https://api.openag.io/changes/vda33d4"
+    },
+    {
+        "href": "https://api.openag.io/changes/jft567d"
+    }]
+}

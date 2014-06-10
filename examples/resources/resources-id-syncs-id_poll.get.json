@@ -5,7 +5,7 @@
     "url": "https://api.agcloud.com/resources/jdkx82d",
     "headers": {
         "X-Custom": "Custom Value"},
-    "latest_etag": "d3fc9278c677bdb7af3781a1ebc2ec090c14f5f3",
+    "lastChangeId": "kjex9a3",
     "interval": 3600,
     "authorization": {
         "href": "https://api.openag.io/authorizations/8ackam3"
