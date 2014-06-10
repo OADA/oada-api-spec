@@ -1,6 +1,7 @@
 {
     "href": "https://api.openag.io/resources/ixm24ws",
     "etag": "d3fc9278c677bdb7af3781a1ebc2ec090c14f5f3",
+    "guid": "https://api.openag.io/resources/ixm24ws",
     "name": "Frank's Yield",
     "mimeType": "application/vnd.oada.yield+json",
     "created": "1985-04-12T23:20:50.52Z",
