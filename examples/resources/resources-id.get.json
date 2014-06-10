@@ -29,6 +29,9 @@
     "permissions": {
         "href": "https://api.openag.io/resources/ixm24ws/permissions"
     },
+    "derivatives": {
+        "href": "https://api.openag.io/resources/ixm24ws/derivatives"
+    },
     "sync": {
         "href": "https://api.openag.io/resources/ixm24ws/syncs"
     }
