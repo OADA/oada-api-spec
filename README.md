@@ -11,7 +11,7 @@ OADA is openly developed and built under the MIT License.
 ## Current Version
 The current version of the OADA API specification is intended to be a draft revision to seek input and feedback from the larger precision ag community.
 
-The draft specification has been defined in the RESTful API Modeling Language ([RAML](http://raml.org/)). The draft API specification in its entirety can be found here: [oada-api.raml](https://github.com/OADA/oada-api-spec/blob/oada-api.raml)
+The draft specification has been defined in the RESTful API Modeling Language ([RAML](http://raml.org/)). The draft API specification in its entirety can be found here: [oada-api.raml](oada-api.raml)
 
 To improve the readability of the specification it rendered into HTML by raml2html (developed by [kevinrenskers/raml2html][raml2html]) from time to time:
 
