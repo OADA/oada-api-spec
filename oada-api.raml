@@ -147,6 +147,14 @@ traits:
                     OADA implementation will automatically add the new resource
                     to the referenced resources derivative list.
                 example: https://openag.io/resources/d3jcds9
+            mediaType: &mediaType
+                type: string array
+                description: |
+                    Optional parameter. If included it could be a list of one
+                    or more (comma separated if more than one) mediaType to 
+                    filter results on. For example if someone wants to request
+                    a list of fields only, then they could use this query parameter
+                    to do that.
         body:
             multipart/form-data: &formUpload
                 formParameters:
