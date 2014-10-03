@@ -15,7 +15,7 @@
 #
 ---
 title: Open Ag Data Alliance
-version: v0.2
+version: v0.3
 
 baseUri: https://{rootUri}/{version}
 baseUriParameters:
@@ -317,13 +317,19 @@ traits:
                         If the file format stored in ../data does not have a URI
                         mapping, then {key} may not be used.
 
-        /meta:
+        /_id:
+            type: informational
+            get:
+                description: |
+                    Returns the id corresponding to this resource.
+
+        /_meta:
             type: datum
             description: |
                 Document of metadata associated with the resource's data.
             get:
                 description: |
-                    Returns the value of the given meta data key.
+                    Returns the value of the given _meta data key.
                 responses:
                     200:
                         body: 
@@ -332,7 +338,7 @@ traits:
                     404:
             put:
                 description: |
-                    Creates or Updates the value of the given meta data key.
+                    Creates or Updates the value of the given _meta data key.
                 responses:
                     200:
                         body: 
@@ -344,7 +350,7 @@ traits:
                                 example: !include examples/resources/resources-id-meta.get.json
             patch:
                 description: |
-                    Patches the value of the given meta data key.
+                    Patches the value of the given _meta data key.
                 responses:
                     200:
                         body: 
@@ -352,7 +358,7 @@ traits:
                                 example: !include examples/resources/resources-id-meta.get.json
             head:
                 description: |
-                    Returns the headers for the given resource's meta data.
+                    Returns the headers for the given resource's _meta data.
                 responses:
                     404:
 
@@ -384,346 +390,346 @@ traits:
                     description: |
                         Deletes the given key and its value.
 
-        /formats:
-            type: informational
-            get:
-                description: |
-                    Returns a collection of resource formats that the given 
-                    resource can be returned as.
-                is: [ paginated : {defaultLimit: 100}, filterable, expandable ] 
-                body:
-                    application/json:
-                        schema: !!null
-                responses:
-                    200:
-                        body: 
-                            application/json: 
-                                example: !include examples/resources/resources-id-formats.get.json
-
-        /changes:
-            type: informational
-            get:
-                description: |
-                    Returns a collection of changes to this resource and all of
-                    the resources in its tree of children.
-                queryParameters:
-                    lastChangeId:
-                        type: string
-                        description: |
-                            Optional. If provided the returned list of changes
-                            starts with the change directly following the given
-                            id.
-                is: [ paginated : {defaultLimit: 100}, filterable, expandable ] 
-                responses:
-                    200:
-                        body: 
-                            application/json: 
-                               example: !include examples/resources/resources-id-changes.get.json
-
-        /parents:
-            type: collection
-            description: |
-                Add, remove, and list directories that are parents to the
-                given directory.
-            get:
-                description: |
-                    Returns a paginated collection of all directories that are
-                    parents to the given directory. The results can be limited
-                    by an optional query parameter filter.
-                is: [ paginated : {defaultLimit: 100}, filterable ]
-                responses:
-                    200:
-                        body: 
-                            application/json: 
-                                example: !include examples/resources/resources-id-parents.get.json
-            post:
-                description: |
-                    Adds a parent directory to the given directory.
-                body:
-                    application/json:
-                        schema: !!null
-                responses:
-                    201:
-                        body: 
-                            application/json: 
-                                example: !include examples/resources/resources-id-parents-id.get.json
-
-            /{parentId}:
-                type: reference
-                uriParameters:
-                    parentId:
-                        type: string
-                        description: |
-                            The id of a folder resource containing this
-                            resource.
+            /formats:
+                type: informational
                 get:
+                    description: |
+                        Returns a collection of resource formats that the given 
+                        resource can be returned as.
+                    is: [ paginated : {defaultLimit: 100}, filterable, expandable ] 
+                    body:
+                        application/json:
+                            schema: !!null
                     responses:
                         200:
+                            body: 
+                                application/json: 
+                                    example: !include examples/resources/resources-id-formats.get.json
+
+            /changes:
+                type: informational
+                get:
+                    description: |
+                        Returns a collection of changes to this resource and all of
+                        the resources in its tree of children.
+                    queryParameters:
+                        lastChangeId:
+                            type: string
+                            description: |
+                                Optional. If provided the returned list of changes
+                                starts with the change directly following the given
+                                id.
+                    is: [ paginated : {defaultLimit: 100}, filterable, expandable ] 
+                    responses:
+                        200:
+                            body: 
+                                application/json: 
+                                   example: !include examples/resources/resources-id-changes.get.json
+
+            /parents:
+                type: collection
+                description: |
+                    Add, remove, and list directories that are parents to the
+                    given directory.
+                get:
+                    description: |
+                        Returns a paginated collection of all directories that are
+                        parents to the given directory. The results can be limited
+                        by an optional query parameter filter.
+                    is: [ paginated : {defaultLimit: 100}, filterable ]
+                    responses:
+                        200:
+                            body: 
+                                application/json: 
+                                    example: !include examples/resources/resources-id-parents.get.json
+                post:
+                    description: |
+                        Adds a parent directory to the given directory.
+                    body:
+                        application/json:
+                            schema: !!null
+                    responses:
+                        201:
                             body: 
                                 application/json: 
                                     example: !include examples/resources/resources-id-parents-id.get.json
 
-        /children:
-            type: collection
-            description: |
-                Add, remove, and list directories that are parents to the
-                given directory.
-            get:
-                description: |
-                    Returns a paginated collection of all directories that are
-                    children of the given directory. The results can be limited
-                    by an optional query parameter filter.
-                is: [ paginated : {defaultLimit: 100}, filterable ]
-                responses:
-                    200:
-                        body: 
-                            application/json: 
-                                example: !include examples/resources/resources-id-children.get.json
-            post:
-                description: |
-                    Adds a child directory to the given directory.
-                body:
-                    application/json:
-                        schema: !!null
-                responses:
-                    201:
-                        body: 
-                            application/json: 
-                                example: !include examples/resources/resources-id-children-id.get.json
+                /{parentId}:
+                    type: reference
+                    uriParameters:
+                        parentId:
+                            type: string
+                            description: |
+                                The id of a folder resource containing this
+                                resource.
+                    get:
+                        responses:
+                            200:
+                                body: 
+                                    application/json: 
+                                        example: !include examples/resources/resources-id-parents-id.get.json
 
-            /{childId}:
-                type: reference
+            /children:
+                type: collection
+                description: |
+                    Add, remove, and list directories that are parents to the
+                    given directory.
                 get:
                     description: |
-                        Returns a document describing the given child.
+                        Returns a paginated collection of all directories that are
+                        children of the given directory. The results can be limited
+                        by an optional query parameter filter.
+                    is: [ paginated : {defaultLimit: 100}, filterable ]
                     responses:
                         200:
+                            body: 
+                                application/json: 
+                                    example: !include examples/resources/resources-id-children.get.json
+                post:
+                    description: |
+                        Adds a child directory to the given directory.
+                    body:
+                        application/json:
+                            schema: !!null
+                    responses:
+                        201:
                             body: 
                                 application/json: 
                                     example: !include examples/resources/resources-id-children-id.get.json
 
-        /permissions:
-            type: collection
-            description: |
-                Add, remove, and list sharing permissions of this resource.
-
-                There are three permission levels:
-
-                - owner
-                - reader
-                - writer
-
-                There are four permission types:
-
-                - user - local user id
-                - domain - all users of a particular identity provider
-                - anyone - publicly available
-                - group - user created grouping of other users (`/groups`)
-            get:
-                description: |
-                    Returns a paginated collection of all permissions associated
-                    with the given directory. The results can be limited
-                    by an optional query parameter filter.
-                is: [ paginated : {defaultLimit: 100}, filterable ]
-                responses:
-                    200:
-                        body: 
-                            application/json: 
-                                example: !include examples/resources/resources-id-permissions.get.json
-            post:
-                description: |
-                    Creates a permission for this resource.
-                responses:
-                    201:
-                        body:
-                            application/json:
-                                example: !include examples/resources/resources-id-permissions-id.get.json
-
-            /{permissionId}:
-                type: datum
-                get:
-                    description: |
-                        Returns the permission document associated with the 
-                        given permission id.
-                    responses:
-                        200:
-                            body: 
-                                application/json: 
-                                    example: !include examples/resources/resources-id-permissions-id.get.json
-                        404:
-                put:
-                    description: |
-                        Creates or Updates a permission document associated with
-                        the given permission id.
-                    responses:
-                        200:
-                            body: 
-                                application/json: 
-                                    example: !include examples/resources/resources-id-permissions-id.get.json
-                        201:
-                            body: 
-                                application/json: 
-                                    example: !include examples/resources/resources-id-permissions-id.get.json
-                        404:
-                patch:
-                    description: |
-                        Updates a permission document associated with
-                        the given permission id.
-                    responses:
-                        200:
-                            body: 
-                                application/json: 
-                                    example: !include examples/resources/resources-id-permissions-id.get.json
-                        404:
-
-        /syncs: 
-            type: collection
-            description: |
-                Set up synchronization between a resource on two different OADA
-                compliant implementations. Push notifications or polling can be
-                used.
-            get:
-                description: |
-                    Returns a paginated collection of all syncs associated
-                    with the given resource. The results can be limited
-                    by an optional query parameter filter.
-                is: [ paginated : {defaultLimit: 100}, filterable ]
-                responses:
-                    200:
-                        body: 
-                            application/json: 
-                                example: !include examples/resources/resources-id-syncs.get.json
-            post:
-                description: |
-                    Creates a sync for this resource.
-                responses:
-                    201:
-                        body:
-                            application/json:
-                                example: !include examples/resources/resources-id-syncs-id_poll.get.json
-
-            /{syncId}:
-                type: datum
-                get:
-                    description: |
-                        Returns the sync document associated with the given
-                        resource/sync id.
-                    responses:
-                        200:
-                            body: 
-                                application/json: 
-                                    example: !include examples/resources/resources-id-syncs-id_push.get.json
-                        404:
-                put:
-                    description: |
-                        Creates or Updates a sync document associated with the
-                        given resources/syncn id.
-                    responses:
-                        200:
-                            body: 
-                                application/json: 
-                                    example: !include examples/resources/resources-id-syncs-id_poll.get.json
-                        201:
-                            body: 
-                                application/json: 
-                                    example: !include examples/resources/resources-id-syncs-id_push.get.json
-                        404:
-                patch:
-                    description: |
-                        Updates a sync document associated with the given
-                        resource/sync id.
-                    responses:
-                        200:
-                            body: 
-                                application/json: 
-                                    example: !include examples/resources/resources-id-syncs-id_push.get.json
-                        404:
-
-        /derivatives:
-            type: collection
-            description: |
-                Add, remove, and list resources that are derivatives of this 
-                resource.
-            get:
-                description: |
-                    Returns a paginated collection of all the resources that are
-                    derivatives to the given resource. The results can be
-                    limited by an optional query parameter filter.
-                is: [ paginated : {defaultLimit: 100}, filterable ]
-                responses:
-                    200:
-                        body: 
-                            application/json: 
-                                example: !include examples/resources/resources-id-derivatives.get.json
-            post:
-                description: |
-                    Adds a derivative to the given resource.
-                body:
-                    application/json:
-                        schema: !!null
-                responses:
-                    201:
-                        body: 
-                            application/json: 
-                                example: !include examples/resources/resources-id-derivatives-id.get.json
-
-            /{derivativeId}:
-                type: reference
-                uriParameters:
-                    derivativeId:
-                        type: string
+                /{childId}:
+                    type: reference
+                    get:
                         description: |
-                            The id of a particular derivative for this
-                            resource.
+                            Returns a document describing the given child.
+                        responses:
+                            200:
+                                body: 
+                                    application/json: 
+                                        example: !include examples/resources/resources-id-children-id.get.json
+
+            /permissions:
+                type: collection
+                description: |
+                    Add, remove, and list sharing permissions of this resource.
+
+                    There are three permission levels:
+
+                    - owner
+                    - reader
+                    - writer
+
+                    There are four permission types:
+
+                    - user - local user id
+                    - domain - all users of a particular identity provider
+                    - anyone - publicly available
+                    - group - user created grouping of other users (`/groups`)
                 get:
+                    description: |
+                        Returns a paginated collection of all permissions associated
+                        with the given directory. The results can be limited
+                        by an optional query parameter filter.
+                    is: [ paginated : {defaultLimit: 100}, filterable ]
                     responses:
                         200:
+                            body: 
+                                application/json: 
+                                    example: !include examples/resources/resources-id-permissions.get.json
+                post:
+                    description: |
+                        Creates a permission for this resource.
+                    responses:
+                        201:
+                            body:
+                                application/json:
+                                    example: !include examples/resources/resources-id-permissions-id.get.json
+
+                /{permissionId}:
+                    type: datum
+                    get:
+                        description: |
+                            Returns the permission document associated with the 
+                            given permission id.
+                        responses:
+                            200:
+                                body: 
+                                    application/json: 
+                                        example: !include examples/resources/resources-id-permissions-id.get.json
+                            404:
+                    put:
+                        description: |
+                            Creates or Updates a permission document associated with
+                            the given permission id.
+                        responses:
+                            200:
+                                body: 
+                                    application/json: 
+                                        example: !include examples/resources/resources-id-permissions-id.get.json
+                            201:
+                                body: 
+                                    application/json: 
+                                        example: !include examples/resources/resources-id-permissions-id.get.json
+                            404:
+                    patch:
+                        description: |
+                            Updates a permission document associated with
+                            the given permission id.
+                        responses:
+                            200:
+                                body: 
+                                    application/json: 
+                                        example: !include examples/resources/resources-id-permissions-id.get.json
+                            404:
+
+            /syncs: 
+                type: collection
+                description: |
+                    Set up synchronization between a resource on two different OADA
+                    compliant implementations. Push notifications or polling can be
+                    used.
+                get:
+                    description: |
+                        Returns a paginated collection of all syncs associated
+                        with the given resource. The results can be limited
+                        by an optional query parameter filter.
+                    is: [ paginated : {defaultLimit: 100}, filterable ]
+                    responses:
+                        200:
+                            body: 
+                                application/json: 
+                                    example: !include examples/resources/resources-id-syncs.get.json
+                post:
+                    description: |
+                        Creates a sync for this resource.
+                    responses:
+                        201:
+                            body:
+                                application/json:
+                                    example: !include examples/resources/resources-id-syncs-id_poll.get.json
+
+                /{syncId}:
+                    type: datum
+                    get:
+                        description: |
+                            Returns the sync document associated with the given
+                            resource/sync id.
+                        responses:
+                            200:
+                                body: 
+                                    application/json: 
+                                        example: !include examples/resources/resources-id-syncs-id_push.get.json
+                            404:
+                    put:
+                        description: |
+                            Creates or Updates a sync document associated with the
+                            given resources/syncn id.
+                        responses:
+                            200:
+                                body: 
+                                    application/json: 
+                                        example: !include examples/resources/resources-id-syncs-id_poll.get.json
+                            201:
+                                body: 
+                                    application/json: 
+                                        example: !include examples/resources/resources-id-syncs-id_push.get.json
+                            404:
+                    patch:
+                        description: |
+                            Updates a sync document associated with the given
+                            resource/sync id.
+                        responses:
+                            200:
+                                body: 
+                                    application/json: 
+                                        example: !include examples/resources/resources-id-syncs-id_push.get.json
+                            404:
+
+            /derivatives:
+                type: collection
+                description: |
+                    Add, remove, and list resources that are derivatives of this 
+                    resource.
+                get:
+                    description: |
+                        Returns a paginated collection of all the resources that are
+                        derivatives to the given resource. The results can be
+                        limited by an optional query parameter filter.
+                    is: [ paginated : {defaultLimit: 100}, filterable ]
+                    responses:
+                        200:
+                            body: 
+                                application/json: 
+                                    example: !include examples/resources/resources-id-derivatives.get.json
+                post:
+                    description: |
+                        Adds a derivative to the given resource.
+                    body:
+                        application/json:
+                            schema: !!null
+                    responses:
+                        201:
                             body: 
                                 application/json: 
                                     example: !include examples/resources/resources-id-derivatives-id.get.json
-/changes:
-    type: informational
-    get:
-        description: |
-            Returns a collection of changes to all available resources.
-        queryParameters:
-            lastChangeId:
-                type: string
-                description: |
-                    Optional. If provided the returned list of changes
-                    starts with the change directly following the given
-                    id.
-        is: [ paginated : {defaultLimit: 100}, filterable, expandable ] 
-        responses:
-            200:
-                body: 
-                    application/json: 
-                        example: !include examples/changes/changes.get.json
 
-    /{changeId}:
+                /{derivativeId}:
+                    type: reference
+                    uriParameters:
+                        derivativeId:
+                            type: string
+                            description: |
+                                The id of a particular derivative for this
+                                resource.
+                    get:
+                        responses:
+                            200:
+                                body: 
+                                    application/json: 
+                                        example: !include examples/resources/resources-id-derivatives-id.get.json
+    /changes:
         type: informational
-        uriParameters:
-            changeId:
-                type: string
-                description: |
-                    The id of a specific change.
         get:
             description: |
-                Returns a document describing a particular change.
+                Returns a collection of changes to all available resources.
+            queryParameters:
+                lastChangeId:
+                    type: string
+                    description: |
+                        Optional. If provided the returned list of changes
+                        starts with the change directly following the given
+                        id.
+            is: [ paginated : {defaultLimit: 100}, filterable, expandable ] 
             responses:
                 200:
                     body: 
                         application/json: 
-                            example: !include examples/changes/changes-id.get.json
+                            example: !include examples/changes/changes.get.json
 
-/configurations:
+        /{changeId}:
+            type: informational
+            uriParameters:
+                changeId:
+                    type: string
+                    description: |
+                        The id of a specific change.
+            get:
+                description: |
+                    Returns a document describing a particular change.
+                responses:
+                    200:
+                        body: 
+                            application/json: 
+                                example: !include examples/changes/changes-id.get.json
+
+/bookmarks:
     type: collection
     description: |
-        Explore and manage farm configuration data such as fields, machines,
+        Explore and manage farm bookmark data such as fields, machines,
         etc. Eventually this data will help directly query resources. 
     get:
         description: |
-            Returns a paginated collection of all configurations for the
+            Returns a paginated collection of all bookmarks for the
             currently authenticated user. The results can be limited by an
             optional query parameter filter.
         is: [ paginated: {defaultLimit: 100}, filterable ]
@@ -744,11 +750,11 @@ traits:
                     application/json: 
                         example: !include examples/configs/configs.get.json
 
-    /{configurationKey}: &_configurationKey
+    /{bookmarkKey}: &_bookmarkKey
         type: datum
         description: |
             Custom key heirachy that resloves a resource that is the
-            configuration.
+            bookmark.
         get:
             description: |
                 Returns the key resource.
@@ -760,7 +766,7 @@ traits:
                 404:
         put:
             description: |
-                Creates or Updates the given configuration key
+                Creates or Updates the given bookmark key
             body:
                 application/json:
                     schema: !!null
