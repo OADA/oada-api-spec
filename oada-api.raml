@@ -54,7 +54,7 @@ securitySchemes:
                 headers:
                     Authorization: &authorization
                         description: |
-                            Used to send a valid OAuth 2 access token. 
+                            Used to send a valid OAuth 2 access token.
                         example: |
                             Authorization: Bearer 0b79bab50daca910b000d4f1a2b675d604257e42
                 responses:
@@ -130,12 +130,12 @@ traits:
         is: [ paginated: {defaultLimit: 100}, filterable ]
         responses:
             200:
-                body: 
-                    application/json: 
+                body:
+                    application/json:
                         example: !include examples/resources/resources.get.json
     post:
         description: |
-            Uploads a new resource and returns the resulting document. 
+            Uploads a new resource and returns the resulting document.
         headers:
             Content-Disposition:
         queryParameters:
@@ -151,7 +151,7 @@ traits:
             multipart/form-data: &formUpload
                 formParameters:
                     blob:
-                        type: file 
+                        type: file
                         required: true
                         description: |
                             The data blob to be uploaded.
@@ -170,8 +170,8 @@ traits:
                 Returns the contents of the given resource.
             responses:
                 200:
-                    body: 
-                        application/json: 
+                    body:
+                        application/json:
                             example: !include examples/resources/resources-id.get.json
         head:
             description: |
@@ -183,8 +183,8 @@ traits:
               Content-Disposition:
             responses:
                 200:
-                    body: 
-                        application/json: 
+                    body:
+                        application/json:
                             example: !include examples/resources/resources-id.get.json
             body:
                 multipart/form-data: *formUpload
@@ -195,127 +195,14 @@ traits:
                 Content-Disposition:
             responses:
                 200:
-                    body: 
-                        application/json: 
+                    body:
+                        application/json:
                             example: !include examples/resources/resources-id.get.json
         delete:
             description: |
                 Deletes the specified resource and its associated data.
             responses:
                 404:
-
-        /data:
-            type: datum
-            description: |
-                The raw data of the resource. It may be any type of blob. 
-
-                However, if the blob is of a known format, for example, JSON or
-                XML, and has a standard method of mapping portions of the data
-                to a URI, such as, JSON Pointer and XML XPath, then you may
-                request just portions of the document using the {key} parameter.
-            get:
-                description: |
-                    Returns the raw resource data.
-                responses:
-                    200:
-                        body: 
-                            application/json: 
-                                example: !include examples/resources/resources-id-data.get.json
-            put:
-                description: |
-                    Creates or Updates the raw resource data.
-                responses:
-                    200:
-                        body: 
-                            application/json: 
-                                example: !include examples/resources/resources-id-data.get.json
-                    201:
-                        body: 
-                            application/json: 
-                                example: !include examples/resources/resources-id-data.get.json
-            patch:
-                description: |
-                    Patches the raw resource data.
-                responses:
-                    200:
-                        body: 
-                            application/json: 
-                                example: !include examples/resources/resources-id-data.get.json
-
-            /{key}:
-                type: instance
-                description: |
-                    Create, Update, and Delete the values of the given key.
-
-                    If the file format stored in ../data has a URI mapping,
-                    e.g., JSON Pointer, XML XPath, etc., then {key} may be
-                    replaced with with any valid URI to access only the
-                    associated portion of the document.
-
-                    If the file format stored in ../data does not have a URI
-                    mapping, then {key} may not be used.
-                uriParameters:
-                    key:
-                        type: string
-                        description: |
-                            Key in the given resource data keystore.
-                get:
-                    description: |
-                        Returns the value of the given key.
-                put:
-                    description: |
-                        Updates or Creates a value under the given key. If the
-                        key already exists, the original value will be lost.
-
-                        If the file format stored in ../data has a URI mapping,
-                        e.g., JSON Pointer, XML XPath, etc., then {key} may be
-                        replaced with with any valid URI to access only the
-                        associated portion of the document.
-
-                        If the file format stored in ../data does not have a URI
-                        mapping, then {key} may not be used.
-                    body:
-                        application/json:
-                            schema: !!null
-                patch:
-                    description: |
-                        Patches a value under the given key.
-
-                        If the file format stored in ../data has a URI mapping,
-                        e.g., JSON Pointer, XML XPath, etc., then {key} may be
-                        replaced with with any valid URI to access only the
-                        associated portion of the document.
-
-                        If the file format stored in ../data does not have a URI
-                        mapping, then {key} may not be used.
-                    body:
-                        application/json:
-                            schema: !!null
-                post:
-                    description: |
-                        Adds a single or set of key-value pairs to the store.
-
-                        If the file format stored in ../data has a URI mapping,
-                        e.g., JSON Pointer, XML XPath, etc., then {key} may be
-                        replaced with with any valid URI to access only the
-                        associated portion of the document.
-
-                        If the file format stored in ../data does not have a URI
-                        mapping, then {key} may not be used.
-                    body:
-                        application/json:
-                            schema: !!null
-                delete:
-                    description: |
-                        Deletes the given key and its value.
-
-                        If the file format stored in ../data has a URI mapping,
-                        e.g., JSON Pointer, XML XPath, etc., then {key} may be
-                        replaced with with any valid URI to access only the
-                        associated portion of the document.
-
-                        If the file format stored in ../data does not have a URI
-                        mapping, then {key} may not be used.
 
         /_id:
             type: informational
@@ -332,8 +219,8 @@ traits:
                     Returns the value of the given _meta data key.
                 responses:
                     200:
-                        body: 
-                            application/json: 
+                        body:
+                            application/json:
                                 example: !include examples/resources/resources-id-meta.get.json
                     404:
             put:
@@ -341,20 +228,20 @@ traits:
                     Creates or Updates the value of the given _meta data key.
                 responses:
                     200:
-                        body: 
-                            application/json: 
+                        body:
+                            application/json:
                                 example: !include examples/resources/resources-id-meta.get.json
                     201:
-                        body: 
-                            application/json: 
+                        body:
+                            application/json:
                                 example: !include examples/resources/resources-id-meta.get.json
             patch:
                 description: |
                     Patches the value of the given _meta data key.
                 responses:
                     200:
-                        body: 
-                            application/json: 
+                        body:
+                            application/json:
                                 example: !include examples/resources/resources-id-meta.get.json
             head:
                 description: |
@@ -375,7 +262,7 @@ traits:
                     description: |
                         Returns the value of the given key.
                 put:
-                    description: 
+                    description:
                         Updates or Creates a value under the given key. If the
                         key already exists, the original value will be lost.
                     body:
@@ -394,16 +281,16 @@ traits:
                 type: informational
                 get:
                     description: |
-                        Returns a collection of resource formats that the given 
+                        Returns a collection of resource formats that the given
                         resource can be returned as.
-                    is: [ paginated : {defaultLimit: 100}, filterable, expandable ] 
+                    is: [ paginated : {defaultLimit: 100}, filterable, expandable ]
                     body:
                         application/json:
                             schema: !!null
                     responses:
                         200:
-                            body: 
-                                application/json: 
+                            body:
+                                application/json:
                                     example: !include examples/resources/resources-id-formats.get.json
 
             /changes:
@@ -419,11 +306,11 @@ traits:
                                 Optional. If provided the returned list of changes
                                 starts with the change directly following the given
                                 id.
-                    is: [ paginated : {defaultLimit: 100}, filterable, expandable ] 
+                    is: [ paginated : {defaultLimit: 100}, filterable, expandable ]
                     responses:
                         200:
-                            body: 
-                                application/json: 
+                            body:
+                                application/json:
                                    example: !include examples/resources/resources-id-changes.get.json
 
             /parents:
@@ -439,8 +326,8 @@ traits:
                     is: [ paginated : {defaultLimit: 100}, filterable ]
                     responses:
                         200:
-                            body: 
-                                application/json: 
+                            body:
+                                application/json:
                                     example: !include examples/resources/resources-id-parents.get.json
                 post:
                     description: |
@@ -450,8 +337,8 @@ traits:
                             schema: !!null
                     responses:
                         201:
-                            body: 
-                                application/json: 
+                            body:
+                                application/json:
                                     example: !include examples/resources/resources-id-parents-id.get.json
 
                 /{parentId}:
@@ -465,8 +352,8 @@ traits:
                     get:
                         responses:
                             200:
-                                body: 
-                                    application/json: 
+                                body:
+                                    application/json:
                                         example: !include examples/resources/resources-id-parents-id.get.json
 
             /children:
@@ -482,8 +369,8 @@ traits:
                     is: [ paginated : {defaultLimit: 100}, filterable ]
                     responses:
                         200:
-                            body: 
-                                application/json: 
+                            body:
+                                application/json:
                                     example: !include examples/resources/resources-id-children.get.json
                 post:
                     description: |
@@ -493,8 +380,8 @@ traits:
                             schema: !!null
                     responses:
                         201:
-                            body: 
-                                application/json: 
+                            body:
+                                application/json:
                                     example: !include examples/resources/resources-id-children-id.get.json
 
                 /{childId}:
@@ -504,8 +391,8 @@ traits:
                             Returns a document describing the given child.
                         responses:
                             200:
-                                body: 
-                                    application/json: 
+                                body:
+                                    application/json:
                                         example: !include examples/resources/resources-id-children-id.get.json
 
             /permissions:
@@ -533,8 +420,8 @@ traits:
                     is: [ paginated : {defaultLimit: 100}, filterable ]
                     responses:
                         200:
-                            body: 
-                                application/json: 
+                            body:
+                                application/json:
                                     example: !include examples/resources/resources-id-permissions.get.json
                 post:
                     description: |
@@ -549,12 +436,12 @@ traits:
                     type: datum
                     get:
                         description: |
-                            Returns the permission document associated with the 
+                            Returns the permission document associated with the
                             given permission id.
                         responses:
                             200:
-                                body: 
-                                    application/json: 
+                                body:
+                                    application/json:
                                         example: !include examples/resources/resources-id-permissions-id.get.json
                             404:
                     put:
@@ -563,12 +450,12 @@ traits:
                             the given permission id.
                         responses:
                             200:
-                                body: 
-                                    application/json: 
+                                body:
+                                    application/json:
                                         example: !include examples/resources/resources-id-permissions-id.get.json
                             201:
-                                body: 
-                                    application/json: 
+                                body:
+                                    application/json:
                                         example: !include examples/resources/resources-id-permissions-id.get.json
                             404:
                     patch:
@@ -577,12 +464,12 @@ traits:
                             the given permission id.
                         responses:
                             200:
-                                body: 
-                                    application/json: 
+                                body:
+                                    application/json:
                                         example: !include examples/resources/resources-id-permissions-id.get.json
                             404:
 
-            /syncs: 
+            /syncs:
                 type: collection
                 description: |
                     Set up synchronization between a resource on two different OADA
@@ -596,8 +483,8 @@ traits:
                     is: [ paginated : {defaultLimit: 100}, filterable ]
                     responses:
                         200:
-                            body: 
-                                application/json: 
+                            body:
+                                application/json:
                                     example: !include examples/resources/resources-id-syncs.get.json
                 post:
                     description: |
@@ -616,8 +503,8 @@ traits:
                             resource/sync id.
                         responses:
                             200:
-                                body: 
-                                    application/json: 
+                                body:
+                                    application/json:
                                         example: !include examples/resources/resources-id-syncs-id_push.get.json
                             404:
                     put:
@@ -626,12 +513,12 @@ traits:
                             given resources/syncn id.
                         responses:
                             200:
-                                body: 
-                                    application/json: 
+                                body:
+                                    application/json:
                                         example: !include examples/resources/resources-id-syncs-id_poll.get.json
                             201:
-                                body: 
-                                    application/json: 
+                                body:
+                                    application/json:
                                         example: !include examples/resources/resources-id-syncs-id_push.get.json
                             404:
                     patch:
@@ -640,15 +527,15 @@ traits:
                             resource/sync id.
                         responses:
                             200:
-                                body: 
-                                    application/json: 
+                                body:
+                                    application/json:
                                         example: !include examples/resources/resources-id-syncs-id_push.get.json
                             404:
 
             /derivatives:
                 type: collection
                 description: |
-                    Add, remove, and list resources that are derivatives of this 
+                    Add, remove, and list resources that are derivatives of this
                     resource.
                 get:
                     description: |
@@ -658,8 +545,8 @@ traits:
                     is: [ paginated : {defaultLimit: 100}, filterable ]
                     responses:
                         200:
-                            body: 
-                                application/json: 
+                            body:
+                                application/json:
                                     example: !include examples/resources/resources-id-derivatives.get.json
                 post:
                     description: |
@@ -669,8 +556,8 @@ traits:
                             schema: !!null
                     responses:
                         201:
-                            body: 
-                                application/json: 
+                            body:
+                                application/json:
                                     example: !include examples/resources/resources-id-derivatives-id.get.json
 
                 /{derivativeId}:
@@ -684,49 +571,15 @@ traits:
                     get:
                         responses:
                             200:
-                                body: 
-                                    application/json: 
+                                body:
+                                    application/json:
                                         example: !include examples/resources/resources-id-derivatives-id.get.json
-    /changes:
-        type: informational
-        get:
-            description: |
-                Returns a collection of changes to all available resources.
-            queryParameters:
-                lastChangeId:
-                    type: string
-                    description: |
-                        Optional. If provided the returned list of changes
-                        starts with the change directly following the given
-                        id.
-            is: [ paginated : {defaultLimit: 100}, filterable, expandable ] 
-            responses:
-                200:
-                    body: 
-                        application/json: 
-                            example: !include examples/changes/changes.get.json
-
-        /{changeId}:
-            type: informational
-            uriParameters:
-                changeId:
-                    type: string
-                    description: |
-                        The id of a specific change.
-            get:
-                description: |
-                    Returns a document describing a particular change.
-                responses:
-                    200:
-                        body: 
-                            application/json: 
-                                example: !include examples/changes/changes-id.get.json
 
 /bookmarks:
     type: collection
     description: |
         Explore and manage farm bookmark data such as fields, machines,
-        etc. Eventually this data will help directly query resources. 
+        etc. Eventually this data will help directly query resources.
     get:
         description: |
             Returns a paginated collection of all bookmarks for the
@@ -735,8 +588,8 @@ traits:
         is: [ paginated: {defaultLimit: 100}, filterable ]
         responses:
             200:
-                body: 
-                    application/json: 
+                body:
+                    application/json:
                         example: !include examples/configs/configs.get.json
     post:
         description: |
@@ -746,8 +599,8 @@ traits:
                 schema: !!null
         responses:
             201:
-                body: 
-                    application/json: 
+                body:
+                    application/json:
                         example: !include examples/configs/configs.get.json
 
     /{bookmarkKey}: &_bookmarkKey
@@ -761,7 +614,7 @@ traits:
             responses:
                 200:
                     body:
-                        application/json: 
+                        application/json:
                             example: !include examples/configs/configs-id.get.json
                 404:
         put:
@@ -773,11 +626,11 @@ traits:
             responses:
                 200:
                     body:
-                        application/json: 
+                        application/json:
                             example: !include examples/configs/configs-id.get.json
                 201:
                     body:
-                        application/json: 
+                        application/json:
                             example: !include examples/configs/configs-id.get.json
         patch:
             description: |
@@ -788,7 +641,7 @@ traits:
             responses:
                 200:
                     body:
-                        application/json: 
+                        application/json:
                             example: !include examples/configs/configs-id.get.json
                 404:
         delete:
@@ -898,7 +751,7 @@ traits:
 /authorizations:
     type: collection
     description: |
-        The list of all active authorizations, e.g., tokens, for the current 
+        The list of all active authorizations, e.g., tokens, for the current
         user.
     get:
         responses:
