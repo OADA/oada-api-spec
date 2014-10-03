@@ -711,14 +711,14 @@ traits:
                         application/json: 
                             example: !include examples/changes/changes-id.get.json
 
-/configurations:
+/bookmarks:
     type: collection
     description: |
-        Explore and manage farm configuration data such as fields, machines,
+        Explore and manage farm bookmark data such as fields, machines,
         etc. Eventually this data will help directly query resources. 
     get:
         description: |
-            Returns a paginated collection of all configurations for the
+            Returns a paginated collection of all bookmarks for the
             currently authenticated user. The results can be limited by an
             optional query parameter filter.
         is: [ paginated: {defaultLimit: 100}, filterable ]
@@ -739,11 +739,11 @@ traits:
                     application/json: 
                         example: !include examples/configs/configs.get.json
 
-    /{configurationKey}: &_configurationKey
+    /{bookmarkKey}: &_bookmarkKey
         type: datum
         description: |
             Custom key heirachy that resloves a resource that is the
-            configuration.
+            bookmark.
         get:
             description: |
                 Returns the key resource.
@@ -755,7 +755,7 @@ traits:
                 404:
         put:
             description: |
-                Creates or Updates the given configuration key
+                Creates or Updates the given bookmark key
             body:
                 application/json:
                     schema: !!null
