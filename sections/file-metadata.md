@@ -1,5 +1,0 @@
-#File Metadata
-
-### Schema
-
-### Example
