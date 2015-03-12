@@ -15,8 +15,8 @@ The draft specification has been defined in the RESTful API Modeling Language ([
 
 To improve the readability of the specification it rendered into HTML by raml2html (developed by [kevinrenskers/raml2html][raml2html]) from time to time:
 
-- [Development draft - v0.2](http://openag.io/docs/v0_2.html)
-- [Development draft - v0.3 (active)](http://openag.io/docs/v0_3.html)
+- [Development draft - v0.2](http://oada.github.io/docs/v0_2.html)
+- [Development draft - v0.3 (active)](http://oada.github.io/docs/v0_3.html)
 
 ## Help us make it better
 Please tell us how we can make the API better. If you have a specific feature request or if you found a bug, please use GitHub issues. Fork these docs and send a pull request with improvements. Join the [oada-dev](https://groups.google.com/forum/?hl=en#!forum/oada-dev) mailing list.
